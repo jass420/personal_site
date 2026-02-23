@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jas - Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: #1a1a2e;
+      overflow-x: hidden;
+    }
+
+    /* Vanta background */
+    #vanta-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    /* Scrollable content */
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #1a1a2e;
+    }
+
+    .hero .subtitle {
+      font-size: 1.25rem;
+      font-weight: 300;
+      color: #4a4a6a;
+      margin-bottom: 2rem;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    .hero .scroll-hint {
+      margin-top: 3rem;
+      font-size: 0.85rem;
+      color: #6b7ef7;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: bounce 2s infinite;
+    }
+
+    .hero .scroll-hint::after {
+      content: '';
+      display: block;
+      width: 1px;
+      height: 40px;
+      background: #6b7ef7;
+      margin: 0.75rem auto 0;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+
+    /* Sections */
+    section {
+      padding: 5rem 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #1a1a2e;
+    }
+
+    .section-divider {
+      width: 60px;
+      height: 3px;
+      background: #6b7ef7;
+      margin-bottom: 2.5rem;
+      border-radius: 2px;
+    }
+
+    /* Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(107, 126, 247, 0.15);
+      border-radius: 12px;
+      padding: 1.75rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(107, 126, 247, 0.15);
+    }
+
+    .card h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #1a1a2e;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      color: #4a4a6a;
+      line-height: 1.6;
+    }
+
+    .card .tags {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(107, 126, 247, 0.1);
+      color: #6b7ef7;
+    }
+
+    /* Achievements */
+    .achievement-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .achievement {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(107, 126, 247, 0.15);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .achievement:hover {
+      transform: translateX(6px);
+      box-shadow: 0 8px 24px rgba(107, 126, 247, 0.12);
+    }
+
+    .achievement-icon {
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(107, 126, 247, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .achievement-content h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: #1a1a2e;
+    }
+
+    .achievement-content p {
+      font-size: 0.9rem;
+      color: #4a4a6a;
+      line-height: 1.5;
+    }
+
+    .achievement-content .year {
+      font-size: 0.8rem;
+      color: #6b7ef7;
+      font-weight: 500;
+      margin-top: 0.35rem;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      font-size: 0.85rem;
+      color: #4a4a6a;
+    }
+
+    footer a {
+      color: #6b7ef7;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 2.25rem; }
+      .hero .subtitle { font-size: 1rem; }
+      .section-title { font-size: 1.5rem; }
+      section { padding: 3rem 1.25rem; }
+      .card-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="vanta-bg"></div>
+
+  <div class="content">
+
+    <!-- Hero -->
+    <header class="hero">
+      <h1>Jas</h1>
+      <p class="subtitle">
+        Software engineer building intelligent systems at the intersection of AI, cloud computing, and modern web development.
+      </p>
+      <div class="scroll-hint">Scroll to explore</div>
+    </header>
+
+    <!-- Projects -->
+    <section>
+      <h2 class="section-title">Projects</h2>
+      <div class="section-divider"></div>
+      <div class="card-grid">
+
+        <div class="card">
+          <h3>Oven AI</h3>
+          <p>An AI platform for business process automation built with Next.js 15, React 19, and LangGraph. Features organization management, process blueprints, and AI workers.</p>
+          <div class="tags">
+            <span class="tag">Next.js</span>
+            <span class="tag">React</span>
+            <span class="tag">Auth0</span>
+            <span class="tag">Supabase</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>LangGraph SE Agent</h3>
+          <p>An AI-powered software engineering agent that performs onboarding, code assistance, and automated PR reviews using LangGraph workflows.</p>
+          <div class="tags">
+            <span class="tag">Python</span>
+            <span class="tag">LangGraph</span>
+            <span class="tag">OpenAI</span>
+            <span class="tag">Docker</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Heuris OS</h3>
+          <p>A business organization system with structured departmental workflows across Marketing, Sales, Finance, HR, and Product teams.</p>
+          <div class="tags">
+            <span class="tag">Organization</span>
+            <span class="tag">Automation</span>
+            <span class="tag">Processes</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Dyad Interaction Visualizer</h3>
+          <p>Data visualization project analyzing dyad interactions using Python. Generates batch and interactive visual outputs for research analysis.</p>
+          <div class="tags">
+            <span class="tag">Python</span>
+            <span class="tag">Matplotlib</span>
+            <span class="tag">Pandas</span>
+            <span class="tag">Seaborn</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Cloud Computing Projects</h3>
+          <p>AWS-deployed applications with Terraform infrastructure-as-code, containerized with Docker, and load-tested with k6 for scalability.</p>
+          <div class="tags">
+            <span class="tag">AWS</span>
+            <span class="tag">Terraform</span>
+            <span class="tag">Flask</span>
+            <span class="tag">Docker</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Achievements -->
+    <section>
+      <h2 class="section-title">Achievements</h2>
+      <div class="section-divider"></div>
+      <div class="achievement-list">
+
+        <div class="achievement">
+          <div class="achievement-icon">&#9889;</div>
+          <div class="achievement-content">
+            <h3>AI Platform Architecture</h3>
+            <p>Designed and built an end-to-end AI business automation platform integrating Auth0, Supabase, and LangGraph into a unified product.</p>
+          </div>
+        </div>
+
+        <div class="achievement">
+          <div class="achievement-icon">&#128640;</div>
+          <div class="achievement-content">
+            <h3>Automated PR Review Pipeline</h3>
+            <p>Built a GitHub webhook-driven automated code review system using LangGraph with hierarchical code understanding.</p>
+          </div>
+        </div>
+
+        <div class="achievement">
+          <div class="achievement-icon">&#9729;&#65039;</div>
+          <div class="achievement-content">
+            <h3>Cloud Infrastructure at Scale</h3>
+            <p>Deployed scalable cloud applications on AWS using Terraform, Docker, and k6 load testing for production-grade reliability.</p>
+          </div>
+        </div>
+
+        <div class="achievement">
+          <div class="achievement-icon">&#128202;</div>
+          <div class="achievement-content">
+            <h3>Data Visualization Research</h3>
+            <p>Developed custom visualization pipelines for dyad interaction analysis, combining batch processing with interactive exploration tools.</p>
+          </div>
+        </div>
+
+        <div class="achievement">
+          <div class="achievement-icon">&#128736;&#65039;</div>
+          <div class="achievement-content">
+            <h3>Full-Stack Engineering</h3>
+            <p>Proficient across the stack from React/Next.js frontends to Python backends, PostgreSQL databases, and cloud infrastructure.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <footer>
+      <p>Built by Jas</p>
+    </footer>
+
+  </div>
+
+  <!-- Vanta.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.fog.min.js"></script>
+  <script>
+    VANTA.FOG({
+      el: "#vanta-bg",
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      highlightColor: 0xf0f0f0,
+      midtoneColor: 0x6b7ef7,
+      lowlightColor: 0xffffff,
+      baseColor: 0xffffff,
+      blurFactor: 0.56,
+      speed: 0.40,
+      zoom: 1.20
+    });
+  </script>
+</body>
+</html>
