@@ -369,6 +369,52 @@
       color: #4a4a6a;
     }
 
+    /* Videos */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .video-card {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(107, 126, 247, 0.15);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .video-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(107, 126, 247, 0.15);
+    }
+
+    .video-card .video-embed {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+    }
+
+    .video-card .video-embed iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .video-card .video-info {
+      padding: 1.25rem;
+    }
+
+    .video-card .video-info h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1a1a2e;
+    }
+
     /* Responsive */
     @media (max-width: 600px) {
       .hero h1 { font-size: 2.25rem; }
@@ -553,6 +599,70 @@
           </div>
         </div>
 
+      </div>
+    </section>
+
+    <!-- Videos -->
+    <section>
+      <h2 class="section-title">Videos</h2>
+      <div class="section-divider"></div>
+      <div class="video-grid">
+
+        <div class="video-card">
+          <div class="video-embed">
+            <iframe src="https://www.youtube.com/embed/lLBdEXCamtU" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-info">
+            <h3>DeepSeek</h3>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-embed">
+            <iframe src="https://www.youtube.com/embed/Gr8C9f7aPYo" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-info">
+            <h3>Open Sora</h3>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-embed">
+            <iframe src="https://www.youtube.com/embed/Wvx1q-rjmtM" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-info">
+            <h3>Swarm Demo</h3>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-embed">
+            <iframe src="https://www.youtube.com/embed/vkny_WOBg9A" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="video-info">
+            <h3>Storm Demo</h3>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Blog -->
+    <section>
+      <h2 class="section-title">Blog</h2>
+      <div class="section-divider"></div>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-header">
+            <h3>The AI Narrative is Shifting &mdash; Is Quantum the Perfect Sequel?</h3>
+          </div>
+          <p>Exploring the intersection of AI and quantum computing, and whether quantum is the next chapter in the evolution of intelligent systems.</p>
+          <div class="tags">
+            <span class="tag">AI</span>
+            <span class="tag">Quantum Computing</span>
+          </div>
+          <a class="card-link" href="https://medium.com/@mjas0401/the-ai-narrative-is-shifting-is-quantum-the-perfect-sequel-5829d8230344" target="_blank">Read on Medium &rarr;</a>
+        </div>
       </div>
     </section>
 
