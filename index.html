@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jas - Portfolio</title>
+  <title>Jasnoor Matharu - Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -18,6 +18,15 @@
       font-family: 'Inter', sans-serif;
       color: #1a1a2e;
       overflow-x: hidden;
+    }
+
+    a {
+      color: #6b7ef7;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
 
     /* Vanta background */
@@ -58,9 +67,35 @@
       font-size: 1.25rem;
       font-weight: 300;
       color: #4a4a6a;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       max-width: 600px;
       line-height: 1.6;
+    }
+
+    .hero .links {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .hero .links a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #6b7ef7;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid rgba(107, 126, 247, 0.3);
+      border-radius: 999px;
+      backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.5);
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .hero .links a:hover {
+      background: rgba(107, 126, 247, 0.1);
+      transform: translateY(-2px);
+      text-decoration: none;
     }
 
     .hero .scroll-hint {
@@ -108,6 +143,105 @@
       border-radius: 2px;
     }
 
+    /* Skills */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .skill-item {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(107, 126, 247, 0.15);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .skill-item h3 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #6b7ef7;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .skill-item p {
+      font-size: 0.9rem;
+      color: #4a4a6a;
+      line-height: 1.5;
+    }
+
+    /* Experience timeline */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .timeline-item {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(107, 126, 247, 0.15);
+      border-radius: 12px;
+      padding: 1.75rem;
+      border-left: 3px solid #6b7ef7;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .timeline-item:hover {
+      transform: translateX(6px);
+      box-shadow: 0 8px 24px rgba(107, 126, 247, 0.12);
+    }
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .timeline-header h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #1a1a2e;
+    }
+
+    .timeline-header .date {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #6b7ef7;
+      white-space: nowrap;
+    }
+
+    .timeline-item p,
+    .timeline-item li {
+      font-size: 0.9rem;
+      color: #4a4a6a;
+      line-height: 1.6;
+    }
+
+    .timeline-item ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .timeline-item ul li {
+      padding-left: 1rem;
+      position: relative;
+      margin-bottom: 0.4rem;
+    }
+
+    .timeline-item ul li::before {
+      content: '\2013';
+      position: absolute;
+      left: 0;
+      color: #6b7ef7;
+    }
+
     /* Cards */
     .card-grid {
       display: grid;
@@ -129,17 +263,33 @@
       box-shadow: 0 12px 32px rgba(107, 126, 247, 0.15);
     }
 
-    .card h3 {
-      font-size: 1.15rem;
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-header h3 {
+      font-size: 1.1rem;
       font-weight: 600;
-      margin-bottom: 0.5rem;
       color: #1a1a2e;
+    }
+
+    .card-header .date {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #6b7ef7;
+      white-space: nowrap;
     }
 
     .card p {
       font-size: 0.9rem;
       color: #4a4a6a;
       line-height: 1.6;
+      margin-bottom: 0.4rem;
     }
 
     .card .tags {
@@ -158,60 +308,57 @@
       color: #6b7ef7;
     }
 
-    /* Achievements */
-    .achievement-list {
+    .card .award {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #d4a017;
+      background: rgba(212, 160, 23, 0.1);
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-link {
+      display: inline-block;
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    /* Education */
+    .education-list {
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
     }
 
-    .achievement {
-      display: flex;
-      align-items: flex-start;
-      gap: 1.25rem;
+    .education-item {
       background: rgba(255, 255, 255, 0.75);
       backdrop-filter: blur(12px);
       border: 1px solid rgba(107, 126, 247, 0.15);
       border-radius: 12px;
       padding: 1.5rem;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .achievement:hover {
-      transform: translateX(6px);
-      box-shadow: 0 8px 24px rgba(107, 126, 247, 0.12);
-    }
-
-    .achievement-icon {
-      flex-shrink: 0;
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      background: rgba(107, 126, 247, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-    }
-
-    .achievement-content h3 {
+    .education-item h3 {
       font-size: 1.05rem;
       font-weight: 600;
-      margin-bottom: 0.25rem;
       color: #1a1a2e;
+      margin-bottom: 0.25rem;
     }
 
-    .achievement-content p {
+    .education-item .school {
+      font-size: 0.9rem;
+      color: #6b7ef7;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .education-item p {
       font-size: 0.9rem;
       color: #4a4a6a;
       line-height: 1.5;
-    }
-
-    .achievement-content .year {
-      font-size: 0.8rem;
-      color: #6b7ef7;
-      font-weight: 500;
-      margin-top: 0.35rem;
     }
 
     /* Footer */
@@ -222,15 +369,6 @@
       color: #4a4a6a;
     }
 
-    footer a {
-      color: #6b7ef7;
-      text-decoration: none;
-    }
-
-    footer a:hover {
-      text-decoration: underline;
-    }
-
     /* Responsive */
     @media (max-width: 600px) {
       .hero h1 { font-size: 2.25rem; }
@@ -238,6 +376,8 @@
       .section-title { font-size: 1.5rem; }
       section { padding: 3rem 1.25rem; }
       .card-grid { grid-template-columns: 1fr; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .timeline-header { flex-direction: column; }
     }
   </style>
 </head>
@@ -249,12 +389,106 @@
 
     <!-- Hero -->
     <header class="hero">
-      <h1>Jas</h1>
+      <h1>Jasnoor Matharu</h1>
       <p class="subtitle">
-        Software engineer building intelligent systems at the intersection of AI, cloud computing, and modern web development.
+        AI Engineer and Computer Science student building intelligent multi-agent systems, cloud infrastructure, and full-stack applications.
       </p>
+      <div class="links">
+        <a href="mailto:mjas0401@gmail.com">Email</a>
+        <a href="https://www.linkedin.com/in/jasnoor-matharu-25b5731a2" target="_blank">LinkedIn</a>
+        <a href="https://github.com/jass420" target="_blank">GitHub</a>
+        <a href="https://www.youtube.com/@jasmatharu5735" target="_blank">YouTube</a>
+      </div>
       <div class="scroll-hint">Scroll to explore</div>
     </header>
+
+    <!-- Skills -->
+    <section>
+      <h2 class="section-title">Skills</h2>
+      <div class="section-divider"></div>
+      <div class="skills-grid">
+        <div class="skill-item">
+          <h3>Programming</h3>
+          <p>Python, SQL, Dart, Java</p>
+        </div>
+        <div class="skill-item">
+          <h3>LLM / AI Engineering</h3>
+          <p>LangGraph multi-agent workflows, tool/function calling, conversational workflow design, evaluation &amp; iteration</p>
+        </div>
+        <div class="skill-item">
+          <h3>Backend &amp; APIs</h3>
+          <p>Flask, REST API design, SQLAlchemy, input validation, error handling, webhooks</p>
+        </div>
+        <div class="skill-item">
+          <h3>Cloud &amp; Infrastructure</h3>
+          <p>AWS (ALB, RDS, EC2), Terraform IaC, autoscaling &amp; load-balancing</p>
+        </div>
+        <div class="skill-item">
+          <h3>Integrations &amp; Testing</h3>
+          <p>Twilio + Ngrok, third-party APIs (OpenAlex, arXiv), performance testing with k6</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section>
+      <h2 class="section-title">Experience</h2>
+      <div class="section-divider"></div>
+      <div class="timeline">
+
+        <div class="timeline-item">
+          <div class="timeline-header">
+            <h3>Founder &amp; AI Engineer, <a href="https://gradianza.com" target="_blank">Gradianza AI</a></h3>
+            <span class="date">Nov 2025 &ndash; Present</span>
+          </div>
+          <ul>
+            <li>Architecting an AI-powered hotel receptionist using LangGraph with multi-path workflow design, handling general enquiries and admin tasks by connecting to hotel management platforms for end-to-end reservation lifecycle management.</li>
+          </ul>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-header">
+            <h3>Co-founder &amp; AI Engineer, <a href="https://useoven.com" target="_blank">Heuris Tech</a></h3>
+            <span class="date">Mar 2025 &ndash; Present</span>
+          </div>
+          <ul>
+            <li>Co-developed useoven.com, a proactive multi-agent LangGraph system that autonomously monitors codebases and fixes issues without user triggers. Backed by UQ ilab.</li>
+          </ul>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-header">
+            <h3>Academic Tutor, University of Queensland</h3>
+            <span class="date">Feb 2025 &ndash; Jun 2025</span>
+          </div>
+          <ul>
+            <li>Facilitated tutorials and practical sessions for second-year students in Theory of Computing (COMP2048).</li>
+          </ul>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-header">
+            <h3>App Developer, Webcom</h3>
+            <span class="date">Dec 2024 &ndash; Feb 2025</span>
+          </div>
+          <ul>
+            <li>Developed and deployed an internal Flutter-based mobile app enabling users to post and browse real estate listings, resulting in increased efficiency.</li>
+          </ul>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-header">
+            <h3>AI Engineer (Contract), WeCareNRI</h3>
+            <span class="date">Jun 2024 &ndash; Jul 2024</span>
+          </div>
+          <ul>
+            <li>Co-developed and deployed server infrastructure, managing API routes and message delivery using Twilio and Ngrok.</li>
+            <li>Developed a language model to deliver intelligent, context-aware responses on WhatsApp.</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
 
     <!-- Projects -->
     <section>
@@ -263,113 +497,85 @@
       <div class="card-grid">
 
         <div class="card">
-          <h3>Oven AI</h3>
-          <p>An AI platform for business process automation built with Next.js 15, React 19, and LangGraph. Features organization management, process blueprints, and AI workers.</p>
-          <div class="tags">
-            <span class="tag">Next.js</span>
-            <span class="tag">React</span>
-            <span class="tag">Auth0</span>
-            <span class="tag">Supabase</span>
+          <div class="card-header">
+            <h3>Valorant Match Predictor</h3>
+            <span class="date">Aug 2024</span>
           </div>
+          <span class="award">UQCS Hackathon 2024 &ndash; People's Choice Award</span>
+          <p>Built a website using a boosting algorithm to predict Valorant matches with 82% accuracy. Calculated upset probabilities and provided betting suggestions.</p>
+          <div class="tags">
+            <span class="tag">ML</span>
+            <span class="tag">Boosting</span>
+            <span class="tag">Web</span>
+          </div>
+          <a class="card-link" href="https://github.com/jass420" target="_blank">View on GitHub &rarr;</a>
         </div>
 
         <div class="card">
-          <h3>LangGraph SE Agent</h3>
-          <p>An AI-powered software engineering agent that performs onboarding, code assistance, and automated PR reviews using LangGraph workflows.</p>
-          <div class="tags">
-            <span class="tag">Python</span>
-            <span class="tag">LangGraph</span>
-            <span class="tag">OpenAI</span>
-            <span class="tag">Docker</span>
+          <div class="card-header">
+            <h3>Auto Exam Scheduler</h3>
+            <span class="date">Mar &ndash; Jun 2025</span>
           </div>
-        </div>
-
-        <div class="card">
-          <h3>Heuris OS</h3>
-          <p>A business organization system with structured departmental workflows across Marketing, Sales, Finance, HR, and Product teams.</p>
+          <p>Co-designed a layered architecture using Spring Boot for university-scale exam scheduling. Built k6 performance tests and Terraform AWS infrastructure with ALB, RDS, and auto-scaling achieving 99.9% uptime.</p>
           <div class="tags">
-            <span class="tag">Organization</span>
-            <span class="tag">Automation</span>
-            <span class="tag">Processes</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Dyad Interaction Visualizer</h3>
-          <p>Data visualization project analyzing dyad interactions using Python. Generates batch and interactive visual outputs for research analysis.</p>
-          <div class="tags">
-            <span class="tag">Python</span>
-            <span class="tag">Matplotlib</span>
-            <span class="tag">Pandas</span>
-            <span class="tag">Seaborn</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Cloud Computing Projects</h3>
-          <p>AWS-deployed applications with Terraform infrastructure-as-code, containerized with Docker, and load-tested with k6 for scalability.</p>
-          <div class="tags">
+            <span class="tag">Spring Boot</span>
             <span class="tag">AWS</span>
             <span class="tag">Terraform</span>
+            <span class="tag">k6</span>
+          </div>
+          <a class="card-link" href="https://github.com/CSSE6400/2025_P2_Auto_Exam_Scheduling" target="_blank">View on GitHub &rarr;</a>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Melanoma Detection</h3>
+            <span class="date">Sep &ndash; Nov 2025</span>
+          </div>
+          <p>Implemented and fine-tuned a Siamese network on the ISIC 2020 Kaggle dataset, achieving 80% accuracy. Developed balanced pair sampling and data augmentation to address 98:2 class imbalance.</p>
+          <div class="tags">
+            <span class="tag">Deep Learning</span>
+            <span class="tag">Siamese Networks</span>
+            <span class="tag">Python</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Research Paper Link Explorer</h3>
+            <span class="date">Sep &ndash; Nov 2025</span>
+          </div>
+          <p>Built a research paper graph generation backend using Flask and SQLAlchemy. Integrated OpenAlex and arXiv APIs for instant graph generation from millions of papers with 99% success rate.</p>
+          <div class="tags">
             <span class="tag">Flask</span>
-            <span class="tag">Docker</span>
+            <span class="tag">SQLAlchemy</span>
+            <span class="tag">OpenAlex</span>
+            <span class="tag">arXiv</span>
           </div>
         </div>
 
       </div>
     </section>
 
-    <!-- Achievements -->
+    <!-- Education -->
     <section>
-      <h2 class="section-title">Achievements</h2>
+      <h2 class="section-title">Education</h2>
       <div class="section-divider"></div>
-      <div class="achievement-list">
-
-        <div class="achievement">
-          <div class="achievement-icon">&#9889;</div>
-          <div class="achievement-content">
-            <h3>AI Platform Architecture</h3>
-            <p>Designed and built an end-to-end AI business automation platform integrating Auth0, Supabase, and LangGraph into a unified product.</p>
-          </div>
+      <div class="education-list">
+        <div class="education-item">
+          <h3>Bachelor of Computer Science, Machine Learning</h3>
+          <div class="school">University of Queensland, Brisbane</div>
+          <p>Active member of UQCS, UQRL, and UQIS.</p>
         </div>
-
-        <div class="achievement">
-          <div class="achievement-icon">&#128640;</div>
-          <div class="achievement-content">
-            <h3>Automated PR Review Pipeline</h3>
-            <p>Built a GitHub webhook-driven automated code review system using LangGraph with hierarchical code understanding.</p>
-          </div>
+        <div class="education-item">
+          <h3>High School</h3>
+          <div class="school">Brisbane State High, Brisbane</div>
+          <p>Volunteered to tutor students, improving their math test grades by 25%.</p>
         </div>
-
-        <div class="achievement">
-          <div class="achievement-icon">&#9729;&#65039;</div>
-          <div class="achievement-content">
-            <h3>Cloud Infrastructure at Scale</h3>
-            <p>Deployed scalable cloud applications on AWS using Terraform, Docker, and k6 load testing for production-grade reliability.</p>
-          </div>
-        </div>
-
-        <div class="achievement">
-          <div class="achievement-icon">&#128202;</div>
-          <div class="achievement-content">
-            <h3>Data Visualization Research</h3>
-            <p>Developed custom visualization pipelines for dyad interaction analysis, combining batch processing with interactive exploration tools.</p>
-          </div>
-        </div>
-
-        <div class="achievement">
-          <div class="achievement-icon">&#128736;&#65039;</div>
-          <div class="achievement-content">
-            <h3>Full-Stack Engineering</h3>
-            <p>Proficient across the stack from React/Next.js frontends to Python backends, PostgreSQL databases, and cloud infrastructure.</p>
-          </div>
-        </div>
-
       </div>
     </section>
 
     <footer>
-      <p>Built by Jas</p>
+      <p>Built by Jasnoor Matharu</p>
     </footer>
 
   </div>
