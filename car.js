@@ -2,15 +2,32 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // ============================================
-// Load the Pagani Huayra BC model
+// Load a car model by path
 // ============================================
 
-export function loadCar(scene, onProgress) {
-  return new Promise((resolve, reject) => {
-    const loader = new GLTFLoader();
+const loader = new GLTFLoader();
 
+export function removeCar(scene) {
+  const existing = scene.getObjectByName('car');
+  if (existing) {
+    existing.traverse((child) => {
+      if (child.isMesh) {
+        child.geometry.dispose();
+        if (child.material.isMaterial) {
+          child.material.dispose();
+        } else if (Array.isArray(child.material)) {
+          child.material.forEach((m) => m.dispose());
+        }
+      }
+    });
+    scene.remove(existing);
+  }
+}
+
+export function loadCar(scene, modelPath, onProgress) {
+  return new Promise((resolve, reject) => {
     loader.load(
-      '2016_pagani_huayra_bc/scene.gltf',
+      modelPath,
       (gltf) => {
         const model = gltf.scene;
         model.name = 'car';
@@ -46,9 +63,11 @@ export function loadCar(scene, onProgress) {
         const modelCenter = modelBox.getCenter(new THREE.Vector3());
         const modelSize = modelBox.getSize(new THREE.Vector3());
 
-        // Build ground
-        const ground = buildGround();
-        scene.add(ground);
+        // Build ground only if it doesn't exist yet
+        if (!scene.getObjectByName('ground')) {
+          const ground = buildGround();
+          scene.add(ground);
+        }
 
         resolve({
           model,

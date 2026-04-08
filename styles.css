@@ -383,6 +383,82 @@ a:hover {
 }
 
 /* ============================================
+   CAR NAVIGATION
+   ============================================ */
+.car-nav-btn {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 11;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  color: #7c3aed;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.car-nav-btn:hover {
+  background: rgba(124, 58, 237, 0.1);
+  border-color: rgba(124, 58, 237, 0.5);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.car-nav-left {
+  left: 1.5rem;
+}
+
+.car-nav-right {
+  right: 1.5rem;
+}
+
+.car-nav-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.car-dots {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 11;
+  display: flex;
+  gap: 0.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.car-dots.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.car-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.25);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  transition: background 0.3s, transform 0.3s;
+}
+
+.car-dot.active {
+  background: #7c3aed;
+  transform: scale(1.2);
+}
+
+/* ============================================
    CONTENT PANELS
    ============================================ */
 #panel-overlay {

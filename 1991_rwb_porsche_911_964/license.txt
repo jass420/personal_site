@@ -1,0 +1,11 @@
+Model Information:
+* title:	1991 RWB Porsche 911 964
+* source:	https://sketchfab.com/3d-models/1991-rwb-porsche-911-964-9f712de78b164191a556729086a29d03
+* author:	Ddiaz Design (https://sketchfab.com/ddiaz-design)
+
+Model License:
+* license type:	CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
+* requirements:	Author must be credited. No commercial use. Modified versions must have the same license.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "1991 RWB Porsche 911 964" (https://sketchfab.com/3d-models/1991-rwb-porsche-911-964-9f712de78b164191a556729086a29d03) by Ddiaz Design (https://sketchfab.com/ddiaz-design) licensed under CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)

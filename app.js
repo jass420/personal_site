@@ -1,8 +1,47 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { loadCar } from './car.js';
+import { loadCar, removeCar } from './car.js';
 import { initPanels, closePanel } from './panels.js';
 import { initCockpitInteraction, setCockpitEnabled } from './cockpit.js';
+
+// ============================================
+// CAR DATA
+// ============================================
+
+const CARS = [
+  {
+    model: '2016_pagani_huayra_bc/scene.gltf',
+    name: 'Roomie',
+    subtitle: 'AI Interior Designer',
+    award: 'Sophiie Hackathon 2026 \u00b7 5th / 15',
+    desc: "Upload a photo of your room and Roomie's AI agent autonomously finds matching furniture on Facebook Marketplace, compares prices, and messages sellers on your behalf.",
+    tags: ['LangGraph', 'GPT-4 Vision', 'AI Agents', 'Python'],
+    github: 'https://github.com/JasMatharu/roomie',
+    video: 'https://www.youtube.com/embed/0mxCZzDBado',
+  },
+  {
+    model: '1991_rwb_porsche_911_964/scene.gltf',
+    name: 'Auto Exam Scheduler',
+    subtitle: 'University Exam Scheduling',
+    award: 'Mar \u2013 Jun 2025',
+    desc: 'Co-built and load-tested the backend for a university exam scheduling system handling room allocation and invigilator assignments, deployed on AWS with auto-scaling (1\u20134 instances) achieving 99.9% uptime.',
+    tags: ['AWS', 'Auto-scaling', 'Load Testing'],
+    github: 'https://github.com/CSSE6400/2025_P2_Auto_Exam_Scheduling',
+    video: null,
+  },
+  {
+    model: '2012_aston_martin_vantage_gte/scene.gltf',
+    name: 'Detecting Melanoma',
+    subtitle: 'Medical Image Classification',
+    award: 'Sep \u2013 Nov 2025',
+    desc: 'Implemented and fine-tuned a Siamese network to classify the ISIC 2020 Kaggle Challenge dataset and achieved 80% accuracy despite a severe 98:2 class imbalance.',
+    tags: ['Deep Learning', 'Siamese Networks', 'Python'],
+    github: null,
+    video: null,
+  },
+];
+
+let currentCarIndex = 0;
 
 // ============================================
 // STATE
@@ -68,9 +107,9 @@ async function init() {
   controls.target.set(0, 0.6, 0);
   controls.enablePan = false;
 
-  // Load the car model
+  // Load the first car
   try {
-    carData = await loadCar(scene, onLoadProgress);
+    carData = await loadCar(scene, CARS[0].model, onLoadProgress);
     onModelLoaded();
   } catch (err) {
     console.error('Failed to load car:', err);
@@ -98,6 +137,10 @@ async function init() {
       exitCar();
     }
   });
+
+  // Car navigation arrows
+  document.getElementById('prev-car').addEventListener('click', () => switchCar(-1));
+  document.getElementById('next-car').addEventListener('click', () => switchCar(1));
 
   // Mobile fallback buttons
   document.querySelectorAll('.mobile-nav-btn').forEach((btn) => {
@@ -157,7 +200,7 @@ function setupLighting() {
   cockpitFill.name = 'cockpit_fill';
   scene.add(cockpitFill);
 
-  // Warm white dashboard glow (no more purple tint)
+  // Warm white dashboard glow
   const dashLight = new THREE.PointLight(0xfff5e6, 0.0, 3);
   dashLight.position.set(0, 0.8, 0.5);
   dashLight.name = 'dash_light';
@@ -196,8 +239,153 @@ function onModelLoaded() {
       document.getElementById('loading-screen').style.display = 'none';
     }, 800);
     document.getElementById('hero-overlay').classList.remove('hidden');
+    showCarNav(true);
     state = 'EXTERIOR';
+    updateDots();
   }, 600);
+}
+
+// ============================================
+// CAR SWITCHING
+// ============================================
+
+let switching = false;
+
+async function switchCar(direction) {
+  if (state !== 'EXTERIOR' || switching) return;
+  switching = true;
+
+  const newIndex = (currentCarIndex + direction + CARS.length) % CARS.length;
+
+  // Fade out the car
+  const existingCar = scene.getObjectByName('car');
+  if (existingCar) {
+    await new Promise((resolve) => {
+      gsap.to(existingCar.position, {
+        y: existingCar.position.y - 0.3,
+        duration: 0.3,
+        ease: 'power2.in',
+      });
+      gsap.to({}, {
+        duration: 0.3,
+        onUpdate: function () {
+          existingCar.traverse((child) => {
+            if (child.isMesh && child.material) {
+              const mats = Array.isArray(child.material) ? child.material : [child.material];
+              mats.forEach((m) => {
+                m.transparent = true;
+                m.opacity = 1 - this.progress();
+              });
+            }
+          });
+        },
+        onComplete: resolve,
+      });
+    });
+
+    removeCar(scene);
+  }
+
+  currentCarIndex = newIndex;
+  updateDots();
+
+  // Load new car
+  try {
+    carData = await loadCar(scene, CARS[currentCarIndex].model, null);
+
+    // Fade in new car
+    const newCar = scene.getObjectByName('car');
+    if (newCar) {
+      newCar.traverse((child) => {
+        if (child.isMesh && child.material) {
+          const mats = Array.isArray(child.material) ? child.material : [child.material];
+          mats.forEach((m) => {
+            m.transparent = true;
+            m.opacity = 0;
+          });
+        }
+      });
+      gsap.to({}, {
+        duration: 0.4,
+        onUpdate: function () {
+          newCar.traverse((child) => {
+            if (child.isMesh && child.material) {
+              const mats = Array.isArray(child.material) ? child.material : [child.material];
+              mats.forEach((m) => {
+                m.opacity = this.progress();
+              });
+            }
+          });
+        },
+        onComplete: () => {
+          newCar.traverse((child) => {
+            if (child.isMesh && child.material) {
+              const mats = Array.isArray(child.material) ? child.material : [child.material];
+              mats.forEach((m) => {
+                m.transparent = false;
+                m.opacity = 1;
+              });
+            }
+          });
+        },
+      });
+    }
+  } catch (err) {
+    console.error('Failed to load car:', err);
+  }
+
+  switching = false;
+}
+
+function updateDots() {
+  const dots = document.querySelectorAll('.car-dot');
+  dots.forEach((dot, i) => {
+    dot.classList.toggle('active', i === currentCarIndex);
+  });
+}
+
+function showCarNav(visible) {
+  const method = visible ? 'add' : 'remove';
+  document.getElementById('prev-car').classList[method]('visible');
+  document.getElementById('next-car').classList[method]('visible');
+  document.getElementById('car-dots').classList[method]('visible');
+}
+
+// ============================================
+// POPULATE OVERLAYS
+// ============================================
+
+function populateOverlays() {
+  const car = CARS[currentCarIndex];
+
+  document.querySelector('.ws-title').textContent = car.name;
+  document.querySelector('.ws-subtitle').textContent = car.subtitle;
+  document.querySelector('.ws-award').textContent = car.award;
+  document.querySelector('.ws-desc').textContent = car.desc;
+
+  // Tags
+  const tagsContainer = document.querySelector('.ws-tags');
+  tagsContainer.innerHTML = car.tags.map((t) => `<span class="ws-tag">${t}</span>`).join('');
+
+  // GitHub link
+  const githubLink = document.querySelector('.ws-github');
+  if (car.github) {
+    githubLink.href = car.github;
+    githubLink.style.display = '';
+  } else {
+    githubLink.style.display = 'none';
+  }
+
+  // Video
+  const dashVideo = document.getElementById('dash-video');
+  const iframe = dashVideo.querySelector('iframe');
+  if (car.video) {
+    iframe.src = car.video;
+    dashVideo.classList.add('visible');
+  } else {
+    iframe.src = '';
+    dashVideo.classList.remove('visible');
+  }
 }
 
 // ============================================
@@ -209,6 +397,7 @@ function enterCar() {
   state = 'TRANSITIONING';
 
   document.getElementById('hero-overlay').classList.add('hidden');
+  showCarNav(false);
 
   controls.enabled = false;
   controls.autoRotate = false;
@@ -236,15 +425,9 @@ function enterCar() {
       // Show HUD
       document.getElementById('cockpit-hud').classList.add('visible');
 
-      // Show cockpit overlays (windscreen info + dash video)
+      // Populate and show overlays
+      populateOverlays();
       document.getElementById('windscreen-info').classList.add('visible');
-      document.getElementById('dash-video').classList.add('visible');
-
-      // Load video iframe
-      const iframe = document.querySelector('#dash-video iframe');
-      if (iframe && !iframe.src) {
-        iframe.src = 'https://www.youtube.com/embed/0mxCZzDBado';
-      }
 
       // Brighten cockpit lights
       const cockpitLight = scene.getObjectByName('cockpit_light');
@@ -296,6 +479,10 @@ function exitCar() {
   document.getElementById('dash-video').classList.remove('visible');
   setCockpitEnabled(false);
 
+  // Clear video src to stop playback
+  const iframe = document.querySelector('#dash-video iframe');
+  if (iframe) iframe.src = '';
+
   // Dim cockpit lights
   const cockpitLight = scene.getObjectByName('cockpit_light');
   const cockpitFill = scene.getObjectByName('cockpit_fill');
@@ -310,6 +497,7 @@ function exitCar() {
       controls.enabled = true;
       controls.autoRotate = true;
       document.getElementById('hero-overlay').classList.remove('hidden');
+      showCarNav(true);
     },
   });
 
