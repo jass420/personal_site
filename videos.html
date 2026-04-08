@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Videos - Jasnoor Matharu</title>
+  <title>Videos — Jas Matharu</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -11,103 +11,94 @@
 </head>
 <body>
 
-  <div id="vanta-bg"></div>
-
   <nav>
-    <a href="index.html" class="nav-logo">Jasnoor Matharu</a>
+    <a href="index.html" class="nav-logo">Jas Matharu</a>
     <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
       <span></span><span></span><span></span>
     </button>
     <div class="nav-links">
       <a href="index.html">Home</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#about">About</a>
       <a href="experience.html">Experience</a>
-      <a href="projects.html">Projects</a>
       <a href="videos.html" class="active">Videos</a>
       <a href="blog.html">Blog</a>
-      <a href="education.html">Education</a>
+      <a href="mailto:mjas0401@gmail.com">Contact</a>
     </div>
   </nav>
 
   <div class="content">
 
     <section class="page-header">
-      <h2 class="section-title">Videos</h2>
-      <div class="section-divider"></div>
-      <div class="video-grid">
+      <div class="section-container">
+        <span class="section-label">Content</span>
+        <h2 class="section-title">Videos</h2>
+        <p class="section-intro">Demos, explainers, and project walkthroughs.</p>
 
-        <div class="video-card">
-          <div class="video-embed">
-            <iframe src="https://www.youtube.com/embed/lLBdEXCamtU" allowfullscreen loading="lazy"></iframe>
+        <div class="video-grid">
+
+          <div class="video-card">
+            <div class="video-embed">
+              <iframe src="https://www.youtube.com/embed/lLBdEXCamtU" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="video-info">
+              <h3>DeepSeek</h3>
+            </div>
           </div>
-          <div class="video-info">
-            <h3>DeepSeek</h3>
+
+          <div class="video-card">
+            <div class="video-embed">
+              <iframe src="https://www.youtube.com/embed/Gr8C9f7aPYo" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="video-info">
+              <h3>Open Sora</h3>
+            </div>
           </div>
+
+          <div class="video-card">
+            <div class="video-embed">
+              <iframe src="https://www.youtube.com/embed/Wvx1q-rjmtM" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="video-info">
+              <h3>Swarm Demo</h3>
+            </div>
+          </div>
+
+          <div class="video-card">
+            <div class="video-embed">
+              <iframe src="https://www.youtube.com/embed/vkny_WOBg9A" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="video-info">
+              <h3>Storm Demo</h3>
+            </div>
+          </div>
+
+          <div class="video-card">
+            <div class="video-embed">
+              <iframe src="https://www.youtube.com/embed/0mxCZzDBado" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="video-info">
+              <h3>Roomie Demo</h3>
+            </div>
+          </div>
+
         </div>
-
-        <div class="video-card">
-          <div class="video-embed">
-            <iframe src="https://www.youtube.com/embed/Gr8C9f7aPYo" allowfullscreen loading="lazy"></iframe>
-          </div>
-          <div class="video-info">
-            <h3>Open Sora</h3>
-          </div>
-        </div>
-
-        <div class="video-card">
-          <div class="video-embed">
-            <iframe src="https://www.youtube.com/embed/Wvx1q-rjmtM" allowfullscreen loading="lazy"></iframe>
-          </div>
-          <div class="video-info">
-            <h3>Swarm Demo</h3>
-          </div>
-        </div>
-
-        <div class="video-card">
-          <div class="video-embed">
-            <iframe src="https://www.youtube.com/embed/vkny_WOBg9A" allowfullscreen loading="lazy"></iframe>
-          </div>
-          <div class="video-info">
-            <h3>Storm Demo</h3>
-          </div>
-        </div>
-
-        <div class="video-card">
-          <div class="video-embed">
-            <iframe src="https://www.youtube.com/embed/0mxCZzDBado" allowfullscreen loading="lazy"></iframe>
-          </div>
-          <div class="video-info">
-            <h3>Roomie Demo</h3>
-          </div>
-        </div>
-
       </div>
     </section>
 
     <footer>
-      <p>Built by Jasnoor Matharu</p>
+      <div class="footer-inner">
+        <div class="footer-links">
+          <a href="index.html">Home</a>
+          <a href="index.html#projects">Projects</a>
+          <a href="index.html#about">About</a>
+          <a href="mailto:mjas0401@gmail.com">Contact</a>
+        </div>
+        <span class="footer-copy">&copy; Jas Matharu — Building practical AI systems.</span>
+      </div>
     </footer>
 
   </div>
 
-  <!-- Vanta.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.fog.min.js"></script>
-  <script>
-    VANTA.FOG({
-      el: "#vanta-bg",
-      mouseControls: true,
-      touchControls: true,
-      gyroControls: false,
-      minHeight: 200.00,
-      minWidth: 200.00,
-      highlightColor: 0xf0f0f0,
-      midtoneColor: 0x6b7ef7,
-      lowlightColor: 0xffffff,
-      baseColor: 0xffffff,
-      blurFactor: 0.56,
-      speed: 0.40,
-      zoom: 1.20
-    });
-  </script>
 </body>
 </html>
