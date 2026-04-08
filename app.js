@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { loadCar, removeCar } from './car.js';
+import { loadCarAt, buildGround } from './car.js';
 import { initPanels, closePanel } from './panels.js';
 import { initCockpitInteraction, setCockpitEnabled } from './cockpit.js';
 
@@ -18,6 +18,8 @@ const CARS = [
     tags: ['LangGraph', 'GPT-4 Vision', 'AI Agents', 'Python'],
     github: 'https://github.com/JasMatharu/roomie',
     video: 'https://www.youtube.com/embed/0mxCZzDBado',
+    position: { x: 0, y: 0, z: 0 },
+    rotation: -0.3,
   },
   {
     model: '1991_rwb_porsche_911_964/scene.gltf',
@@ -28,6 +30,8 @@ const CARS = [
     tags: ['AWS', 'Auto-scaling', 'Load Testing'],
     github: 'https://github.com/CSSE6400/2025_P2_Auto_Exam_Scheduling',
     video: null,
+    position: { x: -4, y: 0, z: -2 },
+    rotation: 0.4,
   },
   {
     model: '2012_aston_martin_vantage_gte/scene.gltf',
@@ -38,6 +42,8 @@ const CARS = [
     tags: ['Deep Learning', 'Siamese Networks', 'Python'],
     github: null,
     video: null,
+    position: { x: 4, y: 0, z: -1.5 },
+    rotation: -0.5,
   },
 ];
 
@@ -49,18 +55,25 @@ let currentCarIndex = 0;
 
 let state = 'LOADING'; // LOADING | EXTERIOR | TRANSITIONING | COCKPIT
 let scene, camera, renderer, controls;
-let carData = null;
+let carDataArray = [];
+let scrollCooldown = false;
 
-// Camera targets for cockpit
+// Camera targets
+const SHOWROOM_CAM = { x: 0, y: 4, z: 10 };
+const SHOWROOM_TARGET = { x: 0, y: 0, z: -1 };
+
 let cockpitBasePosition = new THREE.Vector3();
 let cockpitLookTarget = new THREE.Vector3();
+
+// Raycaster for clicking cars
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
 
 // ============================================
 // INIT
 // ============================================
 
 async function init() {
-  // Renderer
   const container = document.getElementById('canvas-container');
   renderer = new THREE.WebGLRenderer({
     antialias: true,
@@ -76,71 +89,86 @@ async function init() {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   container.appendChild(renderer.domElement);
 
-  // Scene
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xf0f0f5);
-  scene.fog = new THREE.FogExp2(0xf0f0f5, 0.03);
+  scene.fog = new THREE.FogExp2(0xf0f0f5, 0.02);
 
-  // Camera
   camera = new THREE.PerspectiveCamera(
     45,
     window.innerWidth / window.innerHeight,
     0.05,
     100
   );
-  camera.position.set(5, 2.5, 6);
-  camera.lookAt(0, 0.8, 0);
+  camera.position.set(SHOWROOM_CAM.x, SHOWROOM_CAM.y, SHOWROOM_CAM.z);
+  camera.lookAt(SHOWROOM_TARGET.x, SHOWROOM_TARGET.y, SHOWROOM_TARGET.z);
 
-  // Lighting
   setupLighting();
 
-  // OrbitControls for exterior
+  // OrbitControls — limited panning, no auto-rotate
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
-  controls.autoRotate = true;
-  controls.autoRotateSpeed = 0.8;
+  controls.autoRotate = false;
   controls.maxPolarAngle = Math.PI / 2.1;
-  controls.minPolarAngle = 0.3;
-  controls.maxDistance = 12;
-  controls.minDistance = 3;
-  controls.target.set(0, 0.6, 0);
+  controls.minPolarAngle = 0.2;
+  controls.maxDistance = 14;
+  controls.minDistance = 5;
+  controls.target.set(SHOWROOM_TARGET.x, SHOWROOM_TARGET.y, SHOWROOM_TARGET.z);
   controls.enablePan = false;
+  controls.enableZoom = false;
 
-  // Load the first car
+  // Build ground
+  buildGround(scene);
+
+  // Load all 3 cars in parallel
   try {
-    carData = await loadCar(scene, CARS[0].model, onLoadProgress);
+    const loadPromises = CARS.map((car, i) =>
+      loadCarAt(
+        scene,
+        car.model,
+        new THREE.Vector3(car.position.x, car.position.y, car.position.z),
+        car.rotation,
+        `car_${i}`,
+        i === 0 ? onLoadProgress : null
+      )
+    );
+    carDataArray = await Promise.all(loadPromises);
     onModelLoaded();
   } catch (err) {
-    console.error('Failed to load car:', err);
-    document.querySelector('.loader-subtitle').textContent = 'Failed to load 3D model';
+    console.error('Failed to load cars:', err);
+    document.querySelector('.loader-subtitle').textContent = 'Failed to load 3D models';
   }
 
-  // Init panels
   initPanels({});
-
-  // Init cockpit interactions
   initCockpitInteraction();
 
-  // Events
   window.addEventListener('resize', onResize);
 
-  // Hero button
-  document.getElementById('enter-btn').addEventListener('click', enterCar);
+  // Click on a car to enter it
+  renderer.domElement.addEventListener('click', onCanvasClick);
 
   // HUD exit button
   document.getElementById('exit-btn').addEventListener('click', exitCar);
 
-  // Scroll down to exit cockpit
-  document.getElementById('canvas-container').addEventListener('wheel', (e) => {
-    if (state === 'COCKPIT' && e.deltaY > 50) {
-      exitCar();
+  // Scroll to navigate through cars sequentially
+  container.addEventListener('wheel', (e) => {
+    if (scrollCooldown) return;
+
+    if (e.deltaY > 50) {
+      // Scroll down — forward
+      if (state === 'EXTERIOR') {
+        currentCarIndex = 0;
+        enterCar();
+      } else if (state === 'COCKPIT') {
+        transitionToNextCar();
+      }
+    } else if (e.deltaY < -50) {
+      // Scroll up — backward
+      if (state === 'COCKPIT') {
+        transitionToPrevCar();
+      }
     }
   });
-
-  // Car navigation arrows
-  document.getElementById('prev-car').addEventListener('click', () => switchCar(-1));
-  document.getElementById('next-car').addEventListener('click', () => switchCar(1));
 
   // Mobile fallback buttons
   document.querySelectorAll('.mobile-nav-btn').forEach((btn) => {
@@ -152,7 +180,6 @@ async function init() {
     });
   });
 
-  // Start render loop
   animate();
 }
 
@@ -161,35 +188,31 @@ async function init() {
 // ============================================
 
 function setupLighting() {
-  // Ambient — strong so interior is never pitch black
   const ambient = new THREE.AmbientLight(0xffffff, 1.8);
   scene.add(ambient);
 
-  // Key light
   const keyLight = new THREE.DirectionalLight(0xffffff, 2.0);
   keyLight.position.set(5, 8, 5);
   keyLight.castShadow = true;
   keyLight.shadow.mapSize.width = 1024;
   keyLight.shadow.mapSize.height = 1024;
   keyLight.shadow.camera.near = 0.5;
-  keyLight.shadow.camera.far = 20;
-  keyLight.shadow.camera.left = -5;
-  keyLight.shadow.camera.right = 5;
-  keyLight.shadow.camera.top = 5;
-  keyLight.shadow.camera.bottom = -5;
+  keyLight.shadow.camera.far = 25;
+  keyLight.shadow.camera.left = -10;
+  keyLight.shadow.camera.right = 10;
+  keyLight.shadow.camera.top = 10;
+  keyLight.shadow.camera.bottom = -10;
   scene.add(keyLight);
 
-  // Fill light
   const fillLight = new THREE.DirectionalLight(0xc8c8ff, 1.0);
   fillLight.position.set(-3, 2, -3);
   scene.add(fillLight);
 
-  // Subtle purple accent from below
   const accentLight = new THREE.PointLight(0x7c3aed, 0.4, 10);
   accentLight.position.set(0, 0.1, 0);
   scene.add(accentLight);
 
-  // Cockpit interior lights (start dim, brighten on enter)
+  // Cockpit interior lights (start dim)
   const cockpitLight = new THREE.PointLight(0xffffff, 0.0, 5);
   cockpitLight.position.set(0, 1.2, 0.3);
   cockpitLight.name = 'cockpit_light';
@@ -200,7 +223,6 @@ function setupLighting() {
   cockpitFill.name = 'cockpit_fill';
   scene.add(cockpitFill);
 
-  // Warm white dashboard glow
   const dashLight = new THREE.PointLight(0xfff5e6, 0.0, 3);
   dashLight.position.set(0, 0.8, 0.5);
   dashLight.name = 'dash_light';
@@ -239,116 +261,38 @@ function onModelLoaded() {
       document.getElementById('loading-screen').style.display = 'none';
     }, 800);
     document.getElementById('hero-overlay').classList.remove('hidden');
-    showCarNav(true);
     state = 'EXTERIOR';
-    updateDots();
   }, 600);
 }
 
 // ============================================
-// CAR SWITCHING
+// CLICK TO ENTER CAR
 // ============================================
 
-let switching = false;
+function onCanvasClick(event) {
+  if (state !== 'EXTERIOR') return;
 
-async function switchCar(direction) {
-  if (state !== 'EXTERIOR' || switching) return;
-  switching = true;
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-  const newIndex = (currentCarIndex + direction + CARS.length) % CARS.length;
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(scene.children, true);
 
-  // Fade out the car
-  const existingCar = scene.getObjectByName('car');
-  if (existingCar) {
-    await new Promise((resolve) => {
-      gsap.to(existingCar.position, {
-        y: existingCar.position.y - 0.3,
-        duration: 0.3,
-        ease: 'power2.in',
-      });
-      gsap.to({}, {
-        duration: 0.3,
-        onUpdate: function () {
-          existingCar.traverse((child) => {
-            if (child.isMesh && child.material) {
-              const mats = Array.isArray(child.material) ? child.material : [child.material];
-              mats.forEach((m) => {
-                m.transparent = true;
-                m.opacity = 1 - this.progress();
-              });
-            }
-          });
-        },
-        onComplete: resolve,
-      });
-    });
-
-    removeCar(scene);
-  }
-
-  currentCarIndex = newIndex;
-  updateDots();
-
-  // Load new car
-  try {
-    carData = await loadCar(scene, CARS[currentCarIndex].model, null);
-
-    // Fade in new car
-    const newCar = scene.getObjectByName('car');
-    if (newCar) {
-      newCar.traverse((child) => {
-        if (child.isMesh && child.material) {
-          const mats = Array.isArray(child.material) ? child.material : [child.material];
-          mats.forEach((m) => {
-            m.transparent = true;
-            m.opacity = 0;
-          });
+  for (const hit of intersects) {
+    // Walk up to find which car_N group was clicked
+    let obj = hit.object;
+    while (obj) {
+      if (obj.name && obj.name.startsWith('car_')) {
+        const index = parseInt(obj.name.split('_')[1], 10);
+        if (!isNaN(index) && index < CARS.length) {
+          currentCarIndex = index;
+          enterCar();
+          return;
         }
-      });
-      gsap.to({}, {
-        duration: 0.4,
-        onUpdate: function () {
-          newCar.traverse((child) => {
-            if (child.isMesh && child.material) {
-              const mats = Array.isArray(child.material) ? child.material : [child.material];
-              mats.forEach((m) => {
-                m.opacity = this.progress();
-              });
-            }
-          });
-        },
-        onComplete: () => {
-          newCar.traverse((child) => {
-            if (child.isMesh && child.material) {
-              const mats = Array.isArray(child.material) ? child.material : [child.material];
-              mats.forEach((m) => {
-                m.transparent = false;
-                m.opacity = 1;
-              });
-            }
-          });
-        },
-      });
+      }
+      obj = obj.parent;
     }
-  } catch (err) {
-    console.error('Failed to load car:', err);
   }
-
-  switching = false;
-}
-
-function updateDots() {
-  const dots = document.querySelectorAll('.car-dot');
-  dots.forEach((dot, i) => {
-    dot.classList.toggle('active', i === currentCarIndex);
-  });
-}
-
-function showCarNav(visible) {
-  const method = visible ? 'add' : 'remove';
-  document.getElementById('prev-car').classList[method]('visible');
-  document.getElementById('next-car').classList[method]('visible');
-  document.getElementById('car-dots').classList[method]('visible');
 }
 
 // ============================================
@@ -363,11 +307,9 @@ function populateOverlays() {
   document.querySelector('.ws-award').textContent = car.award;
   document.querySelector('.ws-desc').textContent = car.desc;
 
-  // Tags
   const tagsContainer = document.querySelector('.ws-tags');
   tagsContainer.innerHTML = car.tags.map((t) => `<span class="ws-tag">${t}</span>`).join('');
 
-  // GitHub link
   const githubLink = document.querySelector('.ws-github');
   if (car.github) {
     githubLink.href = car.github;
@@ -376,7 +318,6 @@ function populateOverlays() {
     githubLink.style.display = 'none';
   }
 
-  // Video
   const dashVideo = document.getElementById('dash-video');
   const iframe = dashVideo.querySelector('iframe');
   if (car.video) {
@@ -395,17 +336,17 @@ function populateOverlays() {
 function enterCar() {
   if (state !== 'EXTERIOR') return;
   state = 'TRANSITIONING';
+  scrollCooldown = true;
 
   document.getElementById('hero-overlay').classList.add('hidden');
-  showCarNav(false);
 
   controls.enabled = false;
-  controls.autoRotate = false;
 
-  const modelCenter = carData.modelCenter;
-  const modelSize = carData.modelSize;
+  const data = carDataArray[currentCarIndex];
+  const modelCenter = data.modelCenter;
+  const modelSize = data.modelSize;
 
-  // Cockpit camera: driver seat position
+  // Cockpit camera position
   cockpitBasePosition.set(
     modelCenter.x - modelSize.x * 0.005,
     modelCenter.y + modelSize.y * 0.20,
@@ -417,22 +358,25 @@ function enterCar() {
     modelCenter.z + modelSize.z * 0.4
   );
 
+  // Move cockpit lights near this car
+  const cockpitLight = scene.getObjectByName('cockpit_light');
+  const cockpitFill = scene.getObjectByName('cockpit_fill');
+  const dashLight = scene.getObjectByName('dash_light');
+  if (cockpitLight) cockpitLight.position.set(modelCenter.x, modelCenter.y + 0.5, modelCenter.z + 0.3);
+  if (cockpitFill) cockpitFill.position.set(modelCenter.x, modelCenter.y + 0.3, modelCenter.z - 0.2);
+  if (dashLight) dashLight.position.set(modelCenter.x, modelCenter.y + 0.1, modelCenter.z + 0.5);
+
   const timeline = gsap.timeline({
     onComplete: () => {
       state = 'COCKPIT';
+      scrollCooldown = false;
       setCockpitEnabled(true);
 
-      // Show HUD
       document.getElementById('cockpit-hud').classList.add('visible');
 
-      // Populate and show overlays
       populateOverlays();
       document.getElementById('windscreen-info').classList.add('visible');
 
-      // Brighten cockpit lights
-      const cockpitLight = scene.getObjectByName('cockpit_light');
-      const cockpitFill = scene.getObjectByName('cockpit_fill');
-      const dashLight = scene.getObjectByName('dash_light');
       if (cockpitLight) gsap.to(cockpitLight, { intensity: 5.0, duration: 0.5 });
       if (cockpitFill) gsap.to(cockpitFill, { intensity: 3.0, duration: 0.5 });
       if (dashLight) gsap.to(dashLight, { intensity: 2.0, duration: 0.5 });
@@ -457,7 +401,6 @@ function enterCar() {
     ease: 'power3.inOut',
   });
 
-  // Simultaneously face dashboard
   timeline.to(controls.target, {
     x: cockpitLookTarget.x,
     y: cockpitLookTarget.y,
@@ -470,16 +413,58 @@ function enterCar() {
 function exitCar() {
   if (state !== 'COCKPIT') return;
   state = 'TRANSITIONING';
+  scrollCooldown = true;
 
   closePanel();
 
-  // Hide HUD and overlays
   document.getElementById('cockpit-hud').classList.remove('visible');
   document.getElementById('windscreen-info').classList.remove('visible');
   document.getElementById('dash-video').classList.remove('visible');
   setCockpitEnabled(false);
 
-  // Clear video src to stop playback
+  const iframe = document.querySelector('#dash-video iframe');
+  if (iframe) iframe.src = '';
+
+  const cockpitLight = scene.getObjectByName('cockpit_light');
+  const cockpitFill = scene.getObjectByName('cockpit_fill');
+  const dashLight = scene.getObjectByName('dash_light');
+  if (cockpitLight) gsap.to(cockpitLight, { intensity: 0, duration: 0.5 });
+  if (cockpitFill) gsap.to(cockpitFill, { intensity: 0, duration: 0.5 });
+  if (dashLight) gsap.to(dashLight, { intensity: 0, duration: 0.5 });
+
+  const timeline = gsap.timeline({
+    onComplete: () => {
+      state = 'EXTERIOR';
+      scrollCooldown = false;
+      controls.enabled = true;
+      document.getElementById('hero-overlay').classList.remove('hidden');
+    },
+  });
+
+  timeline.to(camera.position, {
+    x: SHOWROOM_CAM.x, y: SHOWROOM_CAM.y, z: SHOWROOM_CAM.z,
+    duration: 1.5,
+    ease: 'power2.inOut',
+  });
+
+  timeline.to(controls.target, {
+    x: SHOWROOM_TARGET.x, y: SHOWROOM_TARGET.y, z: SHOWROOM_TARGET.z,
+    duration: 1.5,
+    ease: 'power2.inOut',
+  }, '-=1.5');
+}
+
+function transitionToNextCar() {
+  if (state !== 'COCKPIT') return;
+  state = 'TRANSITIONING';
+  scrollCooldown = true;
+
+  // Hide current cockpit overlays
+  document.getElementById('cockpit-hud').classList.remove('visible');
+  document.getElementById('windscreen-info').classList.remove('visible');
+  document.getElementById('dash-video').classList.remove('visible');
+  setCockpitEnabled(false);
+
   const iframe = document.querySelector('#dash-video iframe');
   if (iframe) iframe.src = '';
 
@@ -491,26 +476,193 @@ function exitCar() {
   if (cockpitFill) gsap.to(cockpitFill, { intensity: 0, duration: 0.5 });
   if (dashLight) gsap.to(dashLight, { intensity: 0, duration: 0.5 });
 
+  currentCarIndex++;
+
+  // After last car, return to showroom
+  if (currentCarIndex >= CARS.length) {
+    const timeline = gsap.timeline({
+      onComplete: () => {
+        state = 'EXTERIOR';
+        scrollCooldown = false;
+        controls.enabled = true;
+        document.getElementById('hero-overlay').classList.remove('hidden');
+      },
+    });
+
+    timeline.to(camera.position, {
+      x: SHOWROOM_CAM.x, y: SHOWROOM_CAM.y, z: SHOWROOM_CAM.z,
+      duration: 1.5,
+      ease: 'power2.inOut',
+    });
+
+    timeline.to(controls.target, {
+      x: SHOWROOM_TARGET.x, y: SHOWROOM_TARGET.y, z: SHOWROOM_TARGET.z,
+      duration: 1.5,
+      ease: 'power2.inOut',
+    }, '-=1.5');
+
+    return;
+  }
+
+  // Transition directly to next car's cockpit
+  const data = carDataArray[currentCarIndex];
+  const modelCenter = data.modelCenter;
+  const modelSize = data.modelSize;
+
+  cockpitBasePosition.set(
+    modelCenter.x - modelSize.x * 0.005,
+    modelCenter.y + modelSize.y * 0.20,
+    modelCenter.z
+  );
+  cockpitLookTarget.set(
+    modelCenter.x,
+    modelCenter.y + modelSize.y * 0.15,
+    modelCenter.z + modelSize.z * 0.4
+  );
+
+  // Reposition cockpit lights near next car
+  if (cockpitLight) cockpitLight.position.set(modelCenter.x, modelCenter.y + 0.5, modelCenter.z + 0.3);
+  if (cockpitFill) cockpitFill.position.set(modelCenter.x, modelCenter.y + 0.3, modelCenter.z - 0.2);
+  if (dashLight) dashLight.position.set(modelCenter.x, modelCenter.y + 0.1, modelCenter.z + 0.5);
+
   const timeline = gsap.timeline({
     onComplete: () => {
-      state = 'EXTERIOR';
-      controls.enabled = true;
-      controls.autoRotate = true;
-      document.getElementById('hero-overlay').classList.remove('hidden');
-      showCarNav(true);
+      state = 'COCKPIT';
+      scrollCooldown = false;
+      setCockpitEnabled(true);
+
+      document.getElementById('cockpit-hud').classList.add('visible');
+
+      populateOverlays();
+      document.getElementById('windscreen-info').classList.add('visible');
+
+      if (cockpitLight) gsap.to(cockpitLight, { intensity: 5.0, duration: 0.5 });
+      if (cockpitFill) gsap.to(cockpitFill, { intensity: 3.0, duration: 0.5 });
+      if (dashLight) gsap.to(dashLight, { intensity: 2.0, duration: 0.5 });
+    },
+  });
+
+  // Animate camera directly to next car's cockpit
+  timeline.to(camera.position, {
+    x: cockpitBasePosition.x,
+    y: cockpitBasePosition.y,
+    z: cockpitBasePosition.z,
+    duration: 1.5,
+    ease: 'power3.inOut',
+  });
+
+  timeline.to(controls.target, {
+    x: cockpitLookTarget.x,
+    y: cockpitLookTarget.y,
+    z: cockpitLookTarget.z,
+    duration: 1.5,
+    ease: 'power3.inOut',
+  }, '-=1.5');
+}
+
+function transitionToPrevCar() {
+  if (state !== 'COCKPIT') return;
+  state = 'TRANSITIONING';
+  scrollCooldown = true;
+
+  // Hide current cockpit overlays
+  document.getElementById('cockpit-hud').classList.remove('visible');
+  document.getElementById('windscreen-info').classList.remove('visible');
+  document.getElementById('dash-video').classList.remove('visible');
+  setCockpitEnabled(false);
+
+  const iframe = document.querySelector('#dash-video iframe');
+  if (iframe) iframe.src = '';
+
+  // Dim cockpit lights
+  const cockpitLight = scene.getObjectByName('cockpit_light');
+  const cockpitFill = scene.getObjectByName('cockpit_fill');
+  const dashLight = scene.getObjectByName('dash_light');
+  if (cockpitLight) gsap.to(cockpitLight, { intensity: 0, duration: 0.5 });
+  if (cockpitFill) gsap.to(cockpitFill, { intensity: 0, duration: 0.5 });
+  if (dashLight) gsap.to(dashLight, { intensity: 0, duration: 0.5 });
+
+  currentCarIndex--;
+
+  // Before first car, return to showroom
+  if (currentCarIndex < 0) {
+    currentCarIndex = 0;
+    const timeline = gsap.timeline({
+      onComplete: () => {
+        state = 'EXTERIOR';
+        scrollCooldown = false;
+        controls.enabled = true;
+        document.getElementById('hero-overlay').classList.remove('hidden');
+      },
+    });
+
+    timeline.to(camera.position, {
+      x: SHOWROOM_CAM.x, y: SHOWROOM_CAM.y, z: SHOWROOM_CAM.z,
+      duration: 1.5,
+      ease: 'power2.inOut',
+    });
+
+    timeline.to(controls.target, {
+      x: SHOWROOM_TARGET.x, y: SHOWROOM_TARGET.y, z: SHOWROOM_TARGET.z,
+      duration: 1.5,
+      ease: 'power2.inOut',
+    }, '-=1.5');
+
+    return;
+  }
+
+  // Transition to previous car's cockpit
+  const data = carDataArray[currentCarIndex];
+  const modelCenter = data.modelCenter;
+  const modelSize = data.modelSize;
+
+  cockpitBasePosition.set(
+    modelCenter.x - modelSize.x * 0.005,
+    modelCenter.y + modelSize.y * 0.20,
+    modelCenter.z
+  );
+  cockpitLookTarget.set(
+    modelCenter.x,
+    modelCenter.y + modelSize.y * 0.15,
+    modelCenter.z + modelSize.z * 0.4
+  );
+
+  // Reposition cockpit lights near previous car
+  if (cockpitLight) cockpitLight.position.set(modelCenter.x, modelCenter.y + 0.5, modelCenter.z + 0.3);
+  if (cockpitFill) cockpitFill.position.set(modelCenter.x, modelCenter.y + 0.3, modelCenter.z - 0.2);
+  if (dashLight) dashLight.position.set(modelCenter.x, modelCenter.y + 0.1, modelCenter.z + 0.5);
+
+  const timeline = gsap.timeline({
+    onComplete: () => {
+      state = 'COCKPIT';
+      scrollCooldown = false;
+      setCockpitEnabled(true);
+
+      document.getElementById('cockpit-hud').classList.add('visible');
+
+      populateOverlays();
+      document.getElementById('windscreen-info').classList.add('visible');
+
+      if (cockpitLight) gsap.to(cockpitLight, { intensity: 5.0, duration: 0.5 });
+      if (cockpitFill) gsap.to(cockpitFill, { intensity: 3.0, duration: 0.5 });
+      if (dashLight) gsap.to(dashLight, { intensity: 2.0, duration: 0.5 });
     },
   });
 
   timeline.to(camera.position, {
-    x: 5, y: 2.5, z: 6,
+    x: cockpitBasePosition.x,
+    y: cockpitBasePosition.y,
+    z: cockpitBasePosition.z,
     duration: 1.5,
-    ease: 'power2.inOut',
+    ease: 'power3.inOut',
   });
 
   timeline.to(controls.target, {
-    x: 0, y: 0.6, z: 0,
+    x: cockpitLookTarget.x,
+    y: cockpitLookTarget.y,
+    z: cockpitLookTarget.z,
     duration: 1.5,
-    ease: 'power2.inOut',
+    ease: 'power3.inOut',
   }, '-=1.5');
 }
 
@@ -525,7 +677,6 @@ function animate() {
     controls.update();
   }
 
-  // Keep camera pointed at dashboard in cockpit
   if (state === 'COCKPIT') {
     camera.lookAt(cockpitLookTarget);
   }

@@ -1,38 +1,21 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-// ============================================
-// Load a car model by path
-// ============================================
-
 const loader = new GLTFLoader();
 
-export function removeCar(scene) {
-  const existing = scene.getObjectByName('car');
-  if (existing) {
-    existing.traverse((child) => {
-      if (child.isMesh) {
-        child.geometry.dispose();
-        if (child.material.isMaterial) {
-          child.material.dispose();
-        } else if (Array.isArray(child.material)) {
-          child.material.forEach((m) => m.dispose());
-        }
-      }
-    });
-    scene.remove(existing);
-  }
-}
+// ============================================
+// Load a car at a specific showroom position
+// ============================================
 
-export function loadCar(scene, modelPath, onProgress) {
+export function loadCarAt(scene, modelPath, position, rotationY, name, onProgress) {
   return new Promise((resolve, reject) => {
     loader.load(
       modelPath,
       (gltf) => {
         const model = gltf.scene;
-        model.name = 'car';
+        model.name = name;
 
-        // Scale and position the model
+        // Scale the model
         const box = new THREE.Box3().setFromObject(model);
         const size = box.getSize(new THREE.Vector3());
         const maxDim = Math.max(size.x, size.y, size.z);
@@ -43,38 +26,57 @@ export function loadCar(scene, modelPath, onProgress) {
         box.setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
 
-        // Center horizontally, sit on ground
-        model.position.x -= center.x;
-        model.position.z -= center.z;
-        model.position.y -= box.min.y;
+        // Center the model on its own origin, then offset to showroom position
+        model.position.x = position.x - center.x;
+        model.position.z = position.z - center.z;
+        model.position.y = position.y - box.min.y;
 
-        // Enable shadows
-        model.traverse((child) => {
-          if (child.isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-          }
-        });
+        // Apply showroom rotation around the model's placed position
+        // We need to rotate around the car's center, not the world origin
+        if (rotationY) {
+          const pivot = new THREE.Group();
+          pivot.name = name;
+          pivot.position.set(position.x, 0, position.z);
+          model.position.x -= position.x;
+          model.position.z -= position.z;
+          pivot.rotation.y = rotationY;
+          pivot.add(model);
+          scene.add(pivot);
 
-        scene.add(model);
+          // Recalculate final bounds from the pivot
+          const modelBox = new THREE.Box3().setFromObject(pivot);
+          const modelCenter = modelBox.getCenter(new THREE.Vector3());
+          const modelSize = modelBox.getSize(new THREE.Vector3());
 
-        // Recalculate final bounds
-        const modelBox = new THREE.Box3().setFromObject(model);
-        const modelCenter = modelBox.getCenter(new THREE.Vector3());
-        const modelSize = modelBox.getSize(new THREE.Vector3());
+          resolve({ model: pivot, modelBounds: modelBox, modelCenter, modelSize });
+        } else {
+          // Enable shadows
+          model.traverse((child) => {
+            if (child.isMesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+            }
+          });
 
-        // Build ground only if it doesn't exist yet
-        if (!scene.getObjectByName('ground')) {
-          const ground = buildGround();
-          scene.add(ground);
+          scene.add(model);
+
+          const modelBox = new THREE.Box3().setFromObject(model);
+          const modelCenter = modelBox.getCenter(new THREE.Vector3());
+          const modelSize = modelBox.getSize(new THREE.Vector3());
+
+          resolve({ model, modelBounds: modelBox, modelCenter, modelSize });
         }
 
-        resolve({
-          model,
-          modelBounds: modelBox,
-          modelCenter,
-          modelSize,
-        });
+        // Enable shadows on all meshes (including pivoted ones)
+        const root = scene.getObjectByName(name);
+        if (root) {
+          root.traverse((child) => {
+            if (child.isMesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+            }
+          });
+        }
       },
       (progress) => {
         if (onProgress && progress.total > 0) {
@@ -90,10 +92,12 @@ export function loadCar(scene, modelPath, onProgress) {
 }
 
 // ============================================
-// GROUND
+// Build ground (call once)
 // ============================================
 
-function buildGround() {
+export function buildGround(scene) {
+  if (scene.getObjectByName('ground')) return;
+
   const group = new THREE.Group();
   group.name = 'ground';
 
@@ -110,12 +114,11 @@ function buildGround() {
   ground.receiveShadow = true;
   group.add(ground);
 
-  // Subtle grid
   const gridHelper = new THREE.GridHelper(40, 60, 0xd0d0e0, 0xd0d0e0);
   gridHelper.position.y = 0.005;
   gridHelper.material.opacity = 0.3;
   gridHelper.material.transparent = true;
   group.add(gridHelper);
 
-  return group;
+  scene.add(group);
 }
