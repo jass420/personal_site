@@ -20,6 +20,7 @@ const CARS = [
     video: 'https://www.youtube.com/embed/0mxCZzDBado',
     position: { x: 0, y: 0, z: 0 },
     rotation: -0.3,
+    cockpit: { posX: -0.005, posY: 0.20, posZ: 0, lookY: 0.15, lookZ: 0.4 },
   },
   {
     model: '1991_rwb_porsche_911_964/scene.gltf',
@@ -44,6 +45,7 @@ const CARS = [
     video: null,
     position: { x: 4, y: 0, z: -1.5 },
     rotation: -0.5,
+    cockpit: { posX: -0.005, posY: 0.15, posZ: -0.1, lookY: 0.10, lookZ: 0.4 },
   },
   {
     model: 'bmw_m3_coupe_e30_1986/scene.gltf',
@@ -364,6 +366,30 @@ function recomputeBounds(index) {
   data.modelSize = box.getSize(new THREE.Vector3());
 }
 
+function setCockpitPosition(index) {
+  const mc = carDataArray[index].modelCenter;
+  const ms = carDataArray[index].modelSize;
+  const c = CARS[index].cockpit;
+
+  // Use per-car overrides if available, otherwise defaults
+  const posX = c?.posX ?? -0.005;
+  const posY = c?.posY ?? 0.20;
+  const posZ = c?.posZ ?? 0;
+  const lookY = c?.lookY ?? 0.15;
+  const lookZ = c?.lookZ ?? 0.4;
+
+  cockpitBasePosition.set(
+    mc.x - ms.x * posX,
+    mc.y + ms.y * posY,
+    mc.z + ms.z * posZ
+  );
+  cockpitLookTarget.set(
+    mc.x,
+    mc.y + ms.y * lookY,
+    mc.z + ms.z * lookZ
+  );
+}
+
 function enterCar() {
   if (state !== 'EXTERIOR') return;
   state = 'TRANSITIONING';
@@ -417,21 +443,9 @@ function enterCar() {
     onComplete: () => {
       // Recompute bounds now that car faces forward
       recomputeBounds(currentCarIndex);
+      setCockpitPosition(currentCarIndex);
+
       const mc = carDataArray[currentCarIndex].modelCenter;
-      const ms = carDataArray[currentCarIndex].modelSize;
-
-      cockpitBasePosition.set(
-        mc.x - ms.x * 0.005,
-        mc.y + ms.y * 0.20,
-        mc.z
-      );
-      cockpitLookTarget.set(
-        mc.x,
-        mc.y + ms.y * 0.15,
-        mc.z + ms.z * 0.4
-      );
-
-      // Position cockpit lights
       if (cockpitLight) cockpitLight.position.set(mc.x, mc.y + 0.5, mc.z + 0.3);
       if (cockpitFill) cockpitFill.position.set(mc.x, mc.y + 0.3, mc.z - 0.2);
       if (dashLight) dashLight.position.set(mc.x, mc.y + 0.1, mc.z + 0.5);
@@ -590,14 +604,10 @@ function transitionToNextCar() {
     duration: 1.0,
     ease: 'power2.inOut',
     onComplete: () => {
-      // Recompute bounds and set cockpit position
       recomputeBounds(currentCarIndex);
+      setCockpitPosition(currentCarIndex);
+
       const mc = carDataArray[currentCarIndex].modelCenter;
-      const ms = carDataArray[currentCarIndex].modelSize;
-
-      cockpitBasePosition.set(mc.x - ms.x * 0.005, mc.y + ms.y * 0.20, mc.z);
-      cockpitLookTarget.set(mc.x, mc.y + ms.y * 0.15, mc.z + ms.z * 0.4);
-
       if (cockpitLight) cockpitLight.position.set(mc.x, mc.y + 0.5, mc.z + 0.3);
       if (cockpitFill) cockpitFill.position.set(mc.x, mc.y + 0.3, mc.z - 0.2);
       if (dashLight) dashLight.position.set(mc.x, mc.y + 0.1, mc.z + 0.5);
@@ -718,12 +728,9 @@ function transitionToPrevCar() {
     ease: 'power2.inOut',
     onComplete: () => {
       recomputeBounds(currentCarIndex);
+      setCockpitPosition(currentCarIndex);
+
       const mc = carDataArray[currentCarIndex].modelCenter;
-      const ms = carDataArray[currentCarIndex].modelSize;
-
-      cockpitBasePosition.set(mc.x - ms.x * 0.005, mc.y + ms.y * 0.20, mc.z);
-      cockpitLookTarget.set(mc.x, mc.y + ms.y * 0.15, mc.z + ms.z * 0.4);
-
       if (cockpitLight) cockpitLight.position.set(mc.x, mc.y + 0.5, mc.z + 0.3);
       if (cockpitFill) cockpitFill.position.set(mc.x, mc.y + 0.3, mc.z - 0.2);
       if (dashLight) dashLight.position.set(mc.x, mc.y + 0.1, mc.z + 0.5);

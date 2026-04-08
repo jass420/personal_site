@@ -1,0 +1,11 @@
+Model Information:
+* title:	Lego man
+* source:	https://sketchfab.com/3d-models/lego-man-c93e5655b94343afa12c6b3a1a81823a
+* author:	Yury Misiyuk (https://sketchfab.com/Tim0)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Lego man" (https://sketchfab.com/3d-models/lego-man-c93e5655b94343afa12c6b3a1a81823a) by Yury Misiyuk (https://sketchfab.com/Tim0) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
