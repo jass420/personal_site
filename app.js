@@ -357,6 +357,13 @@ function populateOverlays() {
 // ENTER / EXIT CAR
 // ============================================
 
+function recomputeBounds(index) {
+  const data = carDataArray[index];
+  const box = new THREE.Box3().setFromObject(data.model);
+  data.modelCenter = box.getCenter(new THREE.Vector3());
+  data.modelSize = box.getSize(new THREE.Vector3());
+}
+
 function enterCar() {
   if (state !== 'EXTERIOR') return;
   state = 'TRANSITIONING';
@@ -367,28 +374,15 @@ function enterCar() {
   controls.enabled = false;
 
   const data = carDataArray[currentCarIndex];
+  const carModel = data.model;
+
+  // Use initial bounds for approach animation
   const modelCenter = data.modelCenter;
   const modelSize = data.modelSize;
 
-  // Cockpit camera position
-  cockpitBasePosition.set(
-    modelCenter.x - modelSize.x * 0.005,
-    modelCenter.y + modelSize.y * 0.20,
-    modelCenter.z
-  );
-  cockpitLookTarget.set(
-    modelCenter.x,
-    modelCenter.y + modelSize.y * 0.15,
-    modelCenter.z + modelSize.z * 0.4
-  );
-
-  // Move cockpit lights near this car
   const cockpitLight = scene.getObjectByName('cockpit_light');
   const cockpitFill = scene.getObjectByName('cockpit_fill');
   const dashLight = scene.getObjectByName('dash_light');
-  if (cockpitLight) cockpitLight.position.set(modelCenter.x, modelCenter.y + 0.5, modelCenter.z + 0.3);
-  if (cockpitFill) cockpitFill.position.set(modelCenter.x, modelCenter.y + 0.3, modelCenter.z - 0.2);
-  if (dashLight) dashLight.position.set(modelCenter.x, modelCenter.y + 0.1, modelCenter.z + 0.5);
 
   const timeline = gsap.timeline({
     onComplete: () => {
@@ -407,7 +401,7 @@ function enterCar() {
     },
   });
 
-  // Step 1: Approach from side
+  // Step 1: Approach from side + rotate car to face forward
   timeline.to(camera.position, {
     x: modelCenter.x - modelSize.x * 0.6,
     y: modelCenter.y + modelSize.y * 0.3,
@@ -416,19 +410,47 @@ function enterCar() {
     ease: 'power2.inOut',
   });
 
-  // Step 2: Slide into cockpit
+  timeline.to(carModel.rotation, {
+    y: 0,
+    duration: 1.0,
+    ease: 'power2.inOut',
+    onComplete: () => {
+      // Recompute bounds now that car faces forward
+      recomputeBounds(currentCarIndex);
+      const mc = carDataArray[currentCarIndex].modelCenter;
+      const ms = carDataArray[currentCarIndex].modelSize;
+
+      cockpitBasePosition.set(
+        mc.x - ms.x * 0.005,
+        mc.y + ms.y * 0.20,
+        mc.z
+      );
+      cockpitLookTarget.set(
+        mc.x,
+        mc.y + ms.y * 0.15,
+        mc.z + ms.z * 0.4
+      );
+
+      // Position cockpit lights
+      if (cockpitLight) cockpitLight.position.set(mc.x, mc.y + 0.5, mc.z + 0.3);
+      if (cockpitFill) cockpitFill.position.set(mc.x, mc.y + 0.3, mc.z - 0.2);
+      if (dashLight) dashLight.position.set(mc.x, mc.y + 0.1, mc.z + 0.5);
+    },
+  }, 0); // Start at the same time as camera approach
+
+  // Step 2: Slide into cockpit (uses dynamically set cockpitBasePosition)
   timeline.to(camera.position, {
-    x: cockpitBasePosition.x,
-    y: cockpitBasePosition.y,
-    z: cockpitBasePosition.z,
+    x: () => cockpitBasePosition.x,
+    y: () => cockpitBasePosition.y,
+    z: () => cockpitBasePosition.z,
     duration: 1.2,
     ease: 'power3.inOut',
   });
 
   timeline.to(controls.target, {
-    x: cockpitLookTarget.x,
-    y: cockpitLookTarget.y,
-    z: cockpitLookTarget.z,
+    x: () => cockpitLookTarget.x,
+    y: () => cockpitLookTarget.y,
+    z: () => cockpitLookTarget.z,
     duration: 1.2,
     ease: 'power3.inOut',
   }, '-=1.2');
@@ -456,8 +478,12 @@ function exitCar() {
   if (cockpitFill) gsap.to(cockpitFill, { intensity: 0, duration: 0.5 });
   if (dashLight) gsap.to(dashLight, { intensity: 0, duration: 0.5 });
 
+  const carModel = carDataArray[currentCarIndex].model;
+  const originalRotation = CARS[currentCarIndex].rotation;
+
   const timeline = gsap.timeline({
     onComplete: () => {
+      recomputeBounds(currentCarIndex);
       state = 'EXTERIOR';
       scrollCooldown = false;
       controls.enabled = true;
@@ -476,6 +502,13 @@ function exitCar() {
     duration: 1.5,
     ease: 'power2.inOut',
   }, '-=1.5');
+
+  // Rotate car back to showroom angle
+  timeline.to(carModel.rotation, {
+    y: originalRotation,
+    duration: 1.5,
+    ease: 'power2.inOut',
+  }, 0);
 }
 
 function transitionToNextCar() {
@@ -500,12 +533,17 @@ function transitionToNextCar() {
   if (cockpitFill) gsap.to(cockpitFill, { intensity: 0, duration: 0.5 });
   if (dashLight) gsap.to(dashLight, { intensity: 0, duration: 0.5 });
 
+  // Rotate current car back to showroom angle
+  const prevCarModel = carDataArray[currentCarIndex].model;
+  const prevOriginalRotation = CARS[currentCarIndex].rotation;
+
   currentCarIndex++;
 
   // After last car, return to showroom
   if (currentCarIndex >= CARS.length) {
     const timeline = gsap.timeline({
       onComplete: () => {
+        recomputeBounds(currentCarIndex - 1);
         state = 'EXTERIOR';
         scrollCooldown = false;
         controls.enabled = true;
@@ -525,31 +563,54 @@ function transitionToNextCar() {
       ease: 'power2.inOut',
     }, '-=1.5');
 
+    timeline.to(prevCarModel.rotation, {
+      y: prevOriginalRotation,
+      duration: 1.5,
+      ease: 'power2.inOut',
+    }, 0);
+
     return;
   }
 
-  // Transition directly to next car's cockpit
-  const data = carDataArray[currentCarIndex];
-  const modelCenter = data.modelCenter;
-  const modelSize = data.modelSize;
+  // Rotate next car to face forward, then recompute bounds and enter cockpit
+  const nextCarModel = carDataArray[currentCarIndex].model;
 
-  cockpitBasePosition.set(
-    modelCenter.x - modelSize.x * 0.005,
-    modelCenter.y + modelSize.y * 0.20,
-    modelCenter.z
-  );
-  cockpitLookTarget.set(
-    modelCenter.x,
-    modelCenter.y + modelSize.y * 0.15,
-    modelCenter.z + modelSize.z * 0.4
-  );
+  const timeline = gsap.timeline();
 
-  // Reposition cockpit lights near next car
-  if (cockpitLight) cockpitLight.position.set(modelCenter.x, modelCenter.y + 0.5, modelCenter.z + 0.3);
-  if (cockpitFill) cockpitFill.position.set(modelCenter.x, modelCenter.y + 0.3, modelCenter.z - 0.2);
-  if (dashLight) dashLight.position.set(modelCenter.x, modelCenter.y + 0.1, modelCenter.z + 0.5);
+  // Phase 1: rotate both cars + move camera out slightly
+  timeline.to(prevCarModel.rotation, {
+    y: prevOriginalRotation,
+    duration: 1.0,
+    ease: 'power2.inOut',
+    onComplete: () => recomputeBounds(currentCarIndex - 1),
+  }, 0);
 
-  const timeline = gsap.timeline({
+  timeline.to(nextCarModel.rotation, {
+    y: 0,
+    duration: 1.0,
+    ease: 'power2.inOut',
+    onComplete: () => {
+      // Recompute bounds and set cockpit position
+      recomputeBounds(currentCarIndex);
+      const mc = carDataArray[currentCarIndex].modelCenter;
+      const ms = carDataArray[currentCarIndex].modelSize;
+
+      cockpitBasePosition.set(mc.x - ms.x * 0.005, mc.y + ms.y * 0.20, mc.z);
+      cockpitLookTarget.set(mc.x, mc.y + ms.y * 0.15, mc.z + ms.z * 0.4);
+
+      if (cockpitLight) cockpitLight.position.set(mc.x, mc.y + 0.5, mc.z + 0.3);
+      if (cockpitFill) cockpitFill.position.set(mc.x, mc.y + 0.3, mc.z - 0.2);
+      if (dashLight) dashLight.position.set(mc.x, mc.y + 0.1, mc.z + 0.5);
+    },
+  }, 0);
+
+  // Phase 2: Slide into next car's cockpit
+  timeline.to(camera.position, {
+    x: () => cockpitBasePosition.x,
+    y: () => cockpitBasePosition.y,
+    z: () => cockpitBasePosition.z,
+    duration: 1.5,
+    ease: 'power3.inOut',
     onComplete: () => {
       state = 'COCKPIT';
       scrollCooldown = false;
@@ -566,19 +627,10 @@ function transitionToNextCar() {
     },
   });
 
-  // Animate camera directly to next car's cockpit
-  timeline.to(camera.position, {
-    x: cockpitBasePosition.x,
-    y: cockpitBasePosition.y,
-    z: cockpitBasePosition.z,
-    duration: 1.5,
-    ease: 'power3.inOut',
-  });
-
   timeline.to(controls.target, {
-    x: cockpitLookTarget.x,
-    y: cockpitLookTarget.y,
-    z: cockpitLookTarget.z,
+    x: () => cockpitLookTarget.x,
+    y: () => cockpitLookTarget.y,
+    z: () => cockpitLookTarget.z,
     duration: 1.5,
     ease: 'power3.inOut',
   }, '-=1.5');
@@ -606,6 +658,10 @@ function transitionToPrevCar() {
   if (cockpitFill) gsap.to(cockpitFill, { intensity: 0, duration: 0.5 });
   if (dashLight) gsap.to(dashLight, { intensity: 0, duration: 0.5 });
 
+  // Rotate current car back to showroom angle
+  const prevCarModel = carDataArray[currentCarIndex].model;
+  const prevOriginalRotation = CARS[currentCarIndex].rotation;
+
   currentCarIndex--;
 
   // Before first car, return to showroom
@@ -613,6 +669,7 @@ function transitionToPrevCar() {
     currentCarIndex = 0;
     const timeline = gsap.timeline({
       onComplete: () => {
+        recomputeBounds(currentCarIndex);
         state = 'EXTERIOR';
         scrollCooldown = false;
         controls.enabled = true;
@@ -632,31 +689,54 @@ function transitionToPrevCar() {
       ease: 'power2.inOut',
     }, '-=1.5');
 
+    // prevCarModel is car 0 in this case — rotate it back
+    timeline.to(prevCarModel.rotation, {
+      y: prevOriginalRotation,
+      duration: 1.5,
+      ease: 'power2.inOut',
+    }, 0);
+
     return;
   }
 
-  // Transition to previous car's cockpit
-  const data = carDataArray[currentCarIndex];
-  const modelCenter = data.modelCenter;
-  const modelSize = data.modelSize;
+  // Rotate previous (target) car to face forward, then enter its cockpit
+  const nextCarModel = carDataArray[currentCarIndex].model;
 
-  cockpitBasePosition.set(
-    modelCenter.x - modelSize.x * 0.005,
-    modelCenter.y + modelSize.y * 0.20,
-    modelCenter.z
-  );
-  cockpitLookTarget.set(
-    modelCenter.x,
-    modelCenter.y + modelSize.y * 0.15,
-    modelCenter.z + modelSize.z * 0.4
-  );
+  const timeline = gsap.timeline();
 
-  // Reposition cockpit lights near previous car
-  if (cockpitLight) cockpitLight.position.set(modelCenter.x, modelCenter.y + 0.5, modelCenter.z + 0.3);
-  if (cockpitFill) cockpitFill.position.set(modelCenter.x, modelCenter.y + 0.3, modelCenter.z - 0.2);
-  if (dashLight) dashLight.position.set(modelCenter.x, modelCenter.y + 0.1, modelCenter.z + 0.5);
+  // Phase 1: rotate both cars
+  timeline.to(prevCarModel.rotation, {
+    y: prevOriginalRotation,
+    duration: 1.0,
+    ease: 'power2.inOut',
+    onComplete: () => recomputeBounds(currentCarIndex + 1),
+  }, 0);
 
-  const timeline = gsap.timeline({
+  timeline.to(nextCarModel.rotation, {
+    y: 0,
+    duration: 1.0,
+    ease: 'power2.inOut',
+    onComplete: () => {
+      recomputeBounds(currentCarIndex);
+      const mc = carDataArray[currentCarIndex].modelCenter;
+      const ms = carDataArray[currentCarIndex].modelSize;
+
+      cockpitBasePosition.set(mc.x - ms.x * 0.005, mc.y + ms.y * 0.20, mc.z);
+      cockpitLookTarget.set(mc.x, mc.y + ms.y * 0.15, mc.z + ms.z * 0.4);
+
+      if (cockpitLight) cockpitLight.position.set(mc.x, mc.y + 0.5, mc.z + 0.3);
+      if (cockpitFill) cockpitFill.position.set(mc.x, mc.y + 0.3, mc.z - 0.2);
+      if (dashLight) dashLight.position.set(mc.x, mc.y + 0.1, mc.z + 0.5);
+    },
+  }, 0);
+
+  // Phase 2: Slide into previous car's cockpit
+  timeline.to(camera.position, {
+    x: () => cockpitBasePosition.x,
+    y: () => cockpitBasePosition.y,
+    z: () => cockpitBasePosition.z,
+    duration: 1.5,
+    ease: 'power3.inOut',
     onComplete: () => {
       state = 'COCKPIT';
       scrollCooldown = false;
@@ -673,18 +753,10 @@ function transitionToPrevCar() {
     },
   });
 
-  timeline.to(camera.position, {
-    x: cockpitBasePosition.x,
-    y: cockpitBasePosition.y,
-    z: cockpitBasePosition.z,
-    duration: 1.5,
-    ease: 'power3.inOut',
-  });
-
   timeline.to(controls.target, {
-    x: cockpitLookTarget.x,
-    y: cockpitLookTarget.y,
-    z: cockpitLookTarget.z,
+    x: () => cockpitLookTarget.x,
+    y: () => cockpitLookTarget.y,
+    z: () => cockpitLookTarget.z,
     duration: 1.5,
     ease: 'power3.inOut',
   }, '-=1.5');
