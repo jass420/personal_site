@@ -8,219 +8,460 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+
+  <!-- Three.js Import Map -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <!-- GSAP -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 </head>
 <body>
 
-  <nav>
-    <a href="index.html" class="nav-logo">Jas Matharu</a>
-    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
-      <span></span><span></span><span></span>
-    </button>
-    <div class="nav-links">
-      <a href="index.html" class="active">Home</a>
-      <a href="#projects">Projects</a>
-      <a href="#about">About</a>
-      <a href="experience.html">Experience</a>
-      <a href="videos.html">Videos</a>
-      <a href="blog.html">Blog</a>
-      <a href="mailto:mjas0401@gmail.com">Contact</a>
+  <!-- ======================== LOADING SCREEN ======================== -->
+  <div id="loading-screen">
+    <h2 class="loader-name">Jas Matharu</h2>
+    <p class="loader-subtitle">Loading experience...</p>
+    <div class="loader-bar-track">
+      <div class="loader-bar-fill" id="loader-bar"></div>
     </div>
-  </nav>
-
-  <div class="content">
-
-    <!-- ======================== HERO ======================== -->
-    <header class="hero">
-      <span class="hero-label">AI Engineer &amp; Builder</span>
-      <h1>Building AI that actually solves <span class="gradient-text">real-world problems.</span></h1>
-      <p class="subtitle">
-        I design and deploy intelligent systems — from AI receptionists to personalised nutrition platforms — focused on real users, not hype.
-      </p>
-      <div class="hero-buttons">
-        <a href="#projects" class="btn-primary">View My Work &rarr;</a>
-        <a href="mailto:mjas0401@gmail.com" class="btn-secondary">Talk to Me</a>
-      </div>
-      <p class="trust-line">Built with real-world deployment in mind — not just demos.</p>
-    </header>
-
-    <!-- ======================== WHAT I DO ======================== -->
-    <section>
-      <div class="section-container">
-        <span class="section-label">What I Do</span>
-        <h2 class="section-title">What I do</h2>
-        <p class="section-intro">I work at the intersection of AI, automation, and real-world problem solving.</p>
-
-        <div class="services-grid">
-          <div class="service-card">
-            <div class="service-icon">🤖</div>
-            <h3>AI Systems</h3>
-            <p>I build production-ready AI systems that interact with users, automate workflows, and deliver real business value. From voice-based AI receptionists to intelligent assistants, my focus is on systems that actually work in the real world.</p>
-          </div>
-          <div class="service-card">
-            <div class="service-icon">🧠</div>
-            <h3>Applied Intelligence</h3>
-            <p>I use modern AI frameworks like LangGraph, RAG pipelines, and tool-based agents to create systems that think, respond, and take action — not just generate text.</p>
-          </div>
-          <div class="service-card">
-            <div class="service-icon">🥗</div>
-            <h3>AI + Health</h3>
-            <p>I'm building Diet Science — a personalised AI nutrition platform designed to provide evidence-based guidance tailored to each individual, going beyond generic diet apps.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================== FEATURED PROJECTS ======================== -->
-    <section id="projects">
-      <div class="section-container">
-        <span class="section-label">Featured Projects</span>
-        <h2 class="section-title">Selected Work</h2>
-        <p class="section-intro">A few systems I've built and deployed.</p>
-
-        <div class="projects-grid">
-
-          <!-- AI Receptionist -->
-          <div class="project-card">
-            <div class="project-info">
-              <h3>AI Receptionist</h3>
-              <p>A real-time voice AI system designed to handle customer calls, answer queries, and automate front-desk operations for businesses.</p>
-              <ul class="project-features">
-                <li>Handles real conversations, not scripted responses</li>
-                <li>Integrates with business workflows</li>
-                <li>Designed for 24/7 availability</li>
-              </ul>
-              <a href="https://gradianza.com" target="_blank" class="project-link">View Project <span class="arrow">&rarr;</span></a>
-            </div>
-            <div class="project-visual">
-              <span class="project-visual-icon">📞</span>
-            </div>
-          </div>
-
-          <!-- Diet Science -->
-          <div class="project-card">
-            <div class="project-info">
-              <h3>Diet Science</h3>
-              <p>An AI-powered nutrition platform that delivers personalised, science-based guidance through a conversational interface.</p>
-              <ul class="project-features">
-                <li>Understands user history and habits</li>
-                <li>Provides real-time recommendations</li>
-                <li>Focuses on long-term behaviour, not quick fixes</li>
-              </ul>
-              <a href="https://thedietscience.com" target="_blank" class="project-link">View Project <span class="arrow">&rarr;</span></a>
-            </div>
-            <div class="project-visual">
-              <span class="project-visual-icon">🥗</span>
-            </div>
-          </div>
-
-          <!-- AI Agents -->
-          <div class="project-card">
-            <div class="project-info">
-              <h3>AI Agents &amp; Automation</h3>
-              <p>Custom-built AI agents using LangGraph and tool integrations to automate complex workflows and decision-making processes.</p>
-              <ul class="project-features">
-                <li>Multi-step reasoning systems</li>
-                <li>Tool-connected AI (APIs, databases, workflows)</li>
-                <li>Designed for real-world execution</li>
-              </ul>
-              <a href="projects.html" class="project-link">View Project <span class="arrow">&rarr;</span></a>
-            </div>
-            <div class="project-visual">
-              <span class="project-visual-icon">⚡</span>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================== HOW I THINK ======================== -->
-    <section class="think-section">
-      <div class="section-container narrow">
-        <span class="section-label">Philosophy</span>
-        <h2 class="section-title">How I approach problems</h2>
-        <div class="think-content">
-          <p class="highlight-text">I don't build AI for the sake of it.</p>
-          <p>Most AI products today look impressive but fail in real-world use. My focus is different — I build systems that are practical, reliable, and actually useful.</p>
-          <p>I combine technical depth with real-world understanding, making sure every system solves a clear problem and delivers measurable value.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================== ABOUT ======================== -->
-    <section id="about">
-      <div class="section-container narrow">
-        <span class="section-label">About</span>
-        <h2 class="section-title">About me</h2>
-        <div class="about-content">
-          <p>I started with a background in IT and AI, but what really shaped my work was seeing how disconnected most technology is from real-life problems.</p>
-          <p>That's what pushed me to build systems that go beyond demos — AI that people can actually use in their daily lives.</p>
-          <p>From automating business workflows to developing personalised health solutions, my goal is simple:</p>
-          <p class="about-cta">Build AI that makes a real difference.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================== TRUST ======================== -->
-    <section>
-      <div class="section-container">
-        <span class="section-label">Credibility</span>
-        <h2 class="section-title">Built with a focus on real-world impact</h2>
-
-        <div class="trust-grid">
-          <div class="trust-item">
-            <div class="trust-icon">🚀</div>
-            <div>
-              <p><strong>Real systems, not just concepts</strong>Deployed and running in production with actual users and businesses.</p>
-            </div>
-          </div>
-          <div class="trust-item">
-            <div class="trust-icon">👥</div>
-            <div>
-              <p><strong>Designed for actual users</strong>Every system is built with the end user in mind — not just to look good in a demo.</p>
-            </div>
-          </div>
-          <div class="trust-item">
-            <div class="trust-icon">🛠️</div>
-            <div>
-              <p><strong>Modern AI architectures</strong>Built using LangGraph, RAG pipelines, tool-calling agents, and cloud infrastructure.</p>
-            </div>
-          </div>
-          <div class="trust-item">
-            <div class="trust-icon">🔄</div>
-            <div>
-              <p><strong>Continuous iteration</strong>Every system evolves based on real feedback from real users.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================== FINAL CTA ======================== -->
-    <section class="final-cta">
-      <span class="section-label">Get in Touch</span>
-      <h2 class="section-title">Let's build something meaningful.</h2>
-      <p class="section-intro">Whether it's an idea, a system, or a real-world problem — I'm always open to building something impactful.</p>
-      <div class="hero-buttons">
-        <a href="mailto:mjas0401@gmail.com" class="btn-primary">Work With Me &rarr;</a>
-        <a href="https://www.linkedin.com/in/jasnoor-matharu-25b5731a2" target="_blank" class="btn-secondary">Get in Touch</a>
-      </div>
-    </section>
-
-    <!-- ======================== FOOTER ======================== -->
-    <footer>
-      <div class="footer-inner">
-        <div class="footer-links">
-          <a href="index.html">Home</a>
-          <a href="#projects">Projects</a>
-          <a href="#about">About</a>
-          <a href="mailto:mjas0401@gmail.com">Contact</a>
-        </div>
-        <span class="footer-copy">&copy; Jas Matharu — Building practical AI systems.</span>
-      </div>
-    </footer>
-
+    <p class="loader-percent" id="loader-percent">0%</p>
   </div>
+
+  <!-- ======================== 3D CANVAS ======================== -->
+  <div id="canvas-container"></div>
+
+  <!-- ======================== HERO OVERLAY ======================== -->
+  <div id="hero-overlay" class="hidden">
+    <span class="hero-label">AI Engineer &amp; Builder</span>
+    <h1 class="hero-title">Building AI that actually solves <span class="gradient-text">real-world problems.</span></h1>
+    <p class="hero-subtitle">
+      I design and deploy intelligent systems — from AI receptionists to personalised nutrition platforms — focused on real users, not hype.
+    </p>
+    <button id="enter-btn" class="hero-enter-btn">
+      Enter My World <span class="arrow">&rarr;</span>
+    </button>
+    <p class="hero-hint">Click to explore the cockpit</p>
+  </div>
+
+  <!-- ======================== COCKPIT HUD ======================== -->
+  <div id="cockpit-hud">
+    <button id="exit-btn" class="hud-exit-btn">
+      &larr; Exit
+    </button>
+    <p class="hud-hint">Hover over glowing elements to explore</p>
+  </div>
+
+  <!-- ======================== TOOLTIP ======================== -->
+  <div id="tooltip"></div>
+
+  <!-- ======================== PANEL OVERLAY ======================== -->
+  <div id="panel-overlay" style="display:none;"></div>
+  <button id="panel-close-btn" class="panel-close-btn" style="display:none;">&times;</button>
+
+  <!-- ======================== CONTENT PANELS ======================== -->
+
+  <!-- PROJECTS -->
+  <div id="panel-projects" class="content-panel" style="display:none;">
+    <h2 class="panel-title">Projects</h2>
+    <p class="panel-subtitle">Systems I've built and deployed.</p>
+
+    <div class="panel-section-label">Featured</div>
+
+    <div class="featured-project">
+      <h3>AI Receptionist</h3>
+      <p>A real-time voice AI system designed to handle customer calls, answer queries, and automate front-desk operations for businesses.</p>
+      <ul>
+        <li>Handles real conversations, not scripted responses</li>
+        <li>Integrates with business workflows</li>
+        <li>Designed for 24/7 availability</li>
+      </ul>
+      <a class="project-link" href="https://gradianza.com" target="_blank">View Project &rarr;</a>
+    </div>
+
+    <div class="featured-project">
+      <h3>Diet Science</h3>
+      <p>An AI-powered nutrition platform that delivers personalised, science-based guidance through a conversational interface.</p>
+      <ul>
+        <li>Understands user history and habits</li>
+        <li>Provides real-time recommendations</li>
+        <li>Focuses on long-term behaviour, not quick fixes</li>
+      </ul>
+      <a class="project-link" href="https://thedietscience.com" target="_blank">View Project &rarr;</a>
+    </div>
+
+    <div class="featured-project">
+      <h3>AI Agents &amp; Automation</h3>
+      <p>Custom-built AI agents using LangGraph and tool integrations to automate complex workflows and decision-making processes.</p>
+      <ul>
+        <li>Multi-step reasoning systems</li>
+        <li>Tool-connected AI (APIs, databases, workflows)</li>
+        <li>Designed for real-world execution</li>
+      </ul>
+    </div>
+
+    <div class="panel-section-label">All Projects</div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3>Roomie &ndash; AI Interior Designer</h3>
+          <span class="date">2026</span>
+        </div>
+        <span class="award">Sophiie Hackathon 2026 &ndash; 5th / 15</span>
+        <p>Built an AI interior designer using LangGraph to autonomously find furniture on Facebook Marketplace based on an image uploaded by the user and message sellers.</p>
+        <div class="tags">
+          <span class="tag">LangGraph</span>
+          <span class="tag">AI Agents</span>
+          <span class="tag">Python</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Auto Exam Scheduler</h3>
+          <span class="date">Mar &ndash; Jun 2025</span>
+        </div>
+        <p>Co-built and load-tested the backend for a university exam scheduling system handling room allocation and invigilator assignments, deployed on AWS with auto-scaling achieving 99.9% uptime.</p>
+        <div class="tags">
+          <span class="tag">AWS</span>
+          <span class="tag">Auto-scaling</span>
+          <span class="tag">Load Testing</span>
+        </div>
+        <a class="card-link" href="https://github.com/CSSE6400/2025_P2_Auto_Exam_Scheduling" target="_blank">View on GitHub &rarr;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Detecting Melanoma from Medical Scans</h3>
+          <span class="date">Sep &ndash; Nov 2025</span>
+        </div>
+        <p>Implemented and fine-tuned a Siamese network to classify the ISIC 2020 Kaggle Challenge dataset and achieved 80% accuracy despite a severe 98:2 class imbalance.</p>
+        <div class="tags">
+          <span class="tag">Deep Learning</span>
+          <span class="tag">Siamese Networks</span>
+          <span class="tag">Python</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Research Paper Link Explorer</h3>
+          <span class="date">Sep &ndash; Nov 2025</span>
+        </div>
+        <p>Developed a research paper graph generation backend using Flask and SQLAlchemy to help academics find complex relationships between papers.</p>
+        <div class="tags">
+          <span class="tag">Flask</span>
+          <span class="tag">SQLAlchemy</span>
+          <span class="tag">OpenAlex</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Valorant Match Predictor</h3>
+          <span class="date">Aug 2024</span>
+        </div>
+        <span class="award">UQCS Hackathon 2024 &ndash; People's Choice Award</span>
+        <p>Built a match outcome predictor for Valorant using a gradient boosting model (Python, XGBoost) achieving 82% accuracy.</p>
+        <div class="tags">
+          <span class="tag">Python</span>
+          <span class="tag">XGBoost</span>
+          <span class="tag">ML</span>
+        </div>
+        <a class="card-link" href="https://github.com/jass420" target="_blank">View on GitHub &rarr;</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPERIENCE -->
+  <div id="panel-experience" class="content-panel" style="display:none;">
+    <h2 class="panel-title">Experience</h2>
+    <p class="panel-subtitle">Where I've worked and what I've built.</p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-header">
+          <h3>Founder &amp; AI Engineer, <a href="https://thedietscience.com" target="_blank">The Diet Science</a></h3>
+          <span class="date">Feb 2026 &ndash; Present</span>
+        </div>
+        <ul>
+          <li>Architecting an AI-powered nutritionist using RAG with Pinecone and OpenAI to retrieve personalised nutrition information via a LangGraph agent; currently in trial with 15 users.</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-header">
+          <h3>Founder &amp; AI Engineer, <a href="https://gradianza.com" target="_blank">Gradianza AI</a></h3>
+          <span class="date">Nov 2025 &ndash; Present</span>
+        </div>
+        <ul>
+          <li>Architecting an AI-powered receptionist which handles bookings for hotels and restaurants. Currently deployed and scaled to handle hundreds of calls per day.</li>
+          <li>Built custom agents for clients to automate marketing tasks and a RAG pipeline that provides full privacy (hosted on client's hardware).</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-header">
+          <h3>Co-founder &amp; AI Engineer, <a href="https://useoven.com" target="_blank">Heuris Tech</a> (UQ ilab accelerator)</h3>
+          <span class="date">Mar 2025 &ndash; Present</span>
+        </div>
+        <ul>
+          <li>Contributed to building a LangGraph-based sales automation agent at useoven.com, reducing manual outreach tasks by 90%.</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-header">
+          <h3>App Developer, Webcom</h3>
+          <span class="date">Dec 2024 &ndash; Feb 2025</span>
+        </div>
+        <ul>
+          <li>Collaborated in a team of 4 to develop and deploy an internal Flutter app for real estate listings; improved app performance by 30% through UI component optimisation and asynchronous data handling in Dart.</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-header">
+          <h3>Academic Tutor, University of Queensland</h3>
+          <span class="date">Feb 2025 &ndash; Jun 2025</span>
+        </div>
+        <ul>
+          <li>Facilitated tutorials and practical sessions for second-year computer science students in Theory of Computing (COMP2048).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div id="panel-about" class="content-panel" style="display:none;">
+    <h2 class="panel-title">About Me</h2>
+    <p class="panel-subtitle">The story behind the work.</p>
+
+    <div class="about-content">
+      <p>I started with a background in IT and AI, but what really shaped my work was seeing how disconnected most technology is from real-life problems.</p>
+      <p>That's what pushed me to build systems that go beyond demos — AI that people can actually use in their daily lives.</p>
+      <p>From automating business workflows to developing personalised health solutions, my goal is simple:</p>
+      <p class="about-cta">Build AI that makes a real difference.</p>
+    </div>
+
+    <div class="panel-section-label">How I Think</div>
+    <div class="about-content">
+      <p class="think-highlight">I don't build AI for the sake of it.</p>
+      <p>Most AI products today look impressive but fail in real-world use. My focus is different — I build systems that are practical, reliable, and actually useful.</p>
+      <p>I combine technical depth with real-world understanding, making sure every system solves a clear problem and delivers measurable value.</p>
+    </div>
+
+    <div class="panel-section-label">Credibility</div>
+    <div class="trust-grid">
+      <div class="trust-item">
+        <div class="trust-icon">&#x1F680;</div>
+        <div>
+          <p><strong>Real systems, not just concepts</strong>Deployed and running in production with actual users and businesses.</p>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">&#x1F465;</div>
+        <div>
+          <p><strong>Designed for actual users</strong>Every system is built with the end user in mind — not just to look good in a demo.</p>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">&#x1F6E0;</div>
+        <div>
+          <p><strong>Modern AI architectures</strong>Built using LangGraph, RAG pipelines, tool-calling agents, and cloud infrastructure.</p>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">&#x1F504;</div>
+        <div>
+          <p><strong>Continuous iteration</strong>Every system evolves based on real feedback from real users.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-section-label" style="margin-top:2.5rem;">Get in Touch</div>
+    <div class="about-content">
+      <p>Whether it's an idea, a system, or a real-world problem — I'm always open to building something impactful.</p>
+      <p>
+        <a href="mailto:mjas0401@gmail.com">Email</a> &nbsp;&middot;&nbsp;
+        <a href="https://www.linkedin.com/in/jasnoor-matharu-25b5731a2" target="_blank">LinkedIn</a> &nbsp;&middot;&nbsp;
+        <a href="https://github.com/jass420" target="_blank">GitHub</a> &nbsp;&middot;&nbsp;
+        <a href="https://www.youtube.com/@jasmatharu5735" target="_blank">YouTube</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- VIDEOS -->
+  <div id="panel-videos" class="content-panel" style="display:none;">
+    <h2 class="panel-title">Videos</h2>
+    <p class="panel-subtitle">Demos, explainers, and project walkthroughs.</p>
+
+    <div class="video-grid">
+      <div class="video-card">
+        <div class="video-embed">
+          <iframe data-src="https://www.youtube.com/embed/lLBdEXCamtU" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="video-info"><h3>DeepSeek</h3></div>
+      </div>
+
+      <div class="video-card">
+        <div class="video-embed">
+          <iframe data-src="https://www.youtube.com/embed/Gr8C9f7aPYo" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="video-info"><h3>Open Sora</h3></div>
+      </div>
+
+      <div class="video-card">
+        <div class="video-embed">
+          <iframe data-src="https://www.youtube.com/embed/Wvx1q-rjmtM" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="video-info"><h3>Swarm Demo</h3></div>
+      </div>
+
+      <div class="video-card">
+        <div class="video-embed">
+          <iframe data-src="https://www.youtube.com/embed/vkny_WOBg9A" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="video-info"><h3>Storm Demo</h3></div>
+      </div>
+
+      <div class="video-card">
+        <div class="video-embed">
+          <iframe data-src="https://www.youtube.com/embed/0mxCZzDBado" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="video-info"><h3>Roomie Demo</h3></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILLS -->
+  <div id="panel-skills" class="content-panel" style="display:none;">
+    <h2 class="panel-title">Skills &amp; Services</h2>
+    <p class="panel-subtitle">What I work with and what I build.</p>
+
+    <div class="panel-section-label">What I Do</div>
+
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon">&#x1F916;</div>
+        <h3>AI Systems</h3>
+        <p>I build production-ready AI systems that interact with users, automate workflows, and deliver real business value. From voice-based AI receptionists to intelligent assistants, my focus is on systems that actually work in the real world.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">&#x1F9E0;</div>
+        <h3>Applied Intelligence</h3>
+        <p>I use modern AI frameworks like LangGraph, RAG pipelines, and tool-based agents to create systems that think, respond, and take action — not just generate text.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">&#x1F957;</div>
+        <h3>AI + Health</h3>
+        <p>I'm building Diet Science — a personalised AI nutrition platform designed to provide evidence-based guidance tailored to each individual, going beyond generic diet apps.</p>
+      </div>
+    </div>
+
+    <div class="panel-section-label">Technical Skills</div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-header"><h3>Programming</h3></div>
+        <p>Python, SQL, Dart, Java</p>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>LLM / AI Engineering</h3></div>
+        <p>LangGraph multi-agent workflows, tool/function calling, conversational workflow design, evaluation &amp; iteration</p>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Backend &amp; APIs</h3></div>
+        <p>Flask, REST API design, SQLAlchemy, input validation, error handling, webhooks</p>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Cloud &amp; Infrastructure</h3></div>
+        <p>AWS (ALB, RDS, EC2), Terraform IaC, autoscaling &amp; load-balancing</p>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Integrations &amp; Testing</h3></div>
+        <p>Twilio + Ngrok, third-party APIs (OpenAlex, arXiv), performance testing with k6</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOG & EDUCATION -->
+  <div id="panel-blog" class="content-panel" style="display:none;">
+    <h2 class="panel-title">Blog &amp; Education</h2>
+    <p class="panel-subtitle">Writing and learning.</p>
+
+    <div class="panel-section-label">Blog</div>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3>The AI Narrative is Shifting &mdash; Is Quantum the Perfect Sequel?</h3>
+        </div>
+        <p>Exploring the intersection of AI and quantum computing, and whether quantum is the next chapter in the evolution of intelligent systems.</p>
+        <div class="tags">
+          <span class="tag">AI</span>
+          <span class="tag">Quantum Computing</span>
+        </div>
+        <a class="card-link" href="https://medium.com/@mjas0401/the-ai-narrative-is-shifting-is-quantum-the-perfect-sequel-5829d8230344" target="_blank">Read on Medium &rarr;</a>
+      </div>
+    </div>
+
+    <div class="panel-section-label">Education</div>
+    <div class="education-item">
+      <h3>Bachelor of Computer Science, Machine Learning</h3>
+      <div class="school">University of Queensland (graduated 12/2025)</div>
+      <p>Active member of clubs such as UQCS, UQRL, and UQIS.</p>
+    </div>
+  </div>
+
+  <!-- ======================== MOBILE FALLBACK ======================== -->
+  <div id="mobile-fallback">
+    <div class="mobile-hero">
+      <h1>Jas Matharu</h1>
+      <p>AI Engineer &amp; Builder</p>
+    </div>
+    <div class="mobile-nav-grid">
+      <button class="mobile-nav-btn" data-panel="projects">
+        <span class="mobile-icon">&#x1F3CE;</span>
+        <span class="mobile-label">Projects</span>
+        <span class="mobile-sublabel">Steering Wheel</span>
+      </button>
+      <button class="mobile-nav-btn" data-panel="experience">
+        <span class="mobile-icon">&#x1F4BB;</span>
+        <span class="mobile-label">Experience</span>
+        <span class="mobile-sublabel">Infotainment</span>
+      </button>
+      <button class="mobile-nav-btn" data-panel="about">
+        <span class="mobile-icon">&#x1F4CD;</span>
+        <span class="mobile-label">About Me</span>
+        <span class="mobile-sublabel">GPS Display</span>
+      </button>
+      <button class="mobile-nav-btn" data-panel="videos">
+        <span class="mobile-icon">&#x1F3AC;</span>
+        <span class="mobile-label">Videos</span>
+        <span class="mobile-sublabel">Rearview Mirror</span>
+      </button>
+      <button class="mobile-nav-btn" data-panel="skills">
+        <span class="mobile-icon">&#x26A1;</span>
+        <span class="mobile-label">Skills</span>
+        <span class="mobile-sublabel">Dashboard Gauges</span>
+      </button>
+      <button class="mobile-nav-btn" data-panel="blog">
+        <span class="mobile-icon">&#x1F4DA;</span>
+        <span class="mobile-label">Blog &amp; Education</span>
+        <span class="mobile-sublabel">Glove Box</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ======================== APP ======================== -->
+  <script type="module" src="app.js"></script>
 
 </body>
 </html>
