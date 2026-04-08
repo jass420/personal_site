@@ -92,6 +92,13 @@ async function init() {
   // HUD exit button
   document.getElementById('exit-btn').addEventListener('click', exitCar);
 
+  // Scroll down to exit cockpit
+  document.getElementById('canvas-container').addEventListener('wheel', (e) => {
+    if (state === 'COCKPIT' && e.deltaY > 50) {
+      exitCar();
+    }
+  });
+
   // Mobile fallback buttons
   document.querySelectorAll('.mobile-nav-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -211,14 +218,14 @@ function enterCar() {
 
   // Cockpit camera: driver seat position
   cockpitBasePosition.set(
-    modelCenter.x - modelSize.x * 0.22,
-    modelCenter.y + modelSize.y * 0.08,
-    modelCenter.z - modelSize.z * 0.05
+    modelCenter.x - modelSize.x * 0.005,
+    modelCenter.y + modelSize.y * 0.20,
+    modelCenter.z
   );
   cockpitLookTarget.set(
     modelCenter.x,
-    modelCenter.y + modelSize.y * 0.35,
-    modelCenter.z + modelSize.z * 0.5
+    modelCenter.y + modelSize.y * 0.15,
+    modelCenter.z + modelSize.z * 0.4
   );
 
   const timeline = gsap.timeline({

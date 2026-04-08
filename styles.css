@@ -251,17 +251,18 @@ a:hover {
    ============================================ */
 #windscreen-info {
   position: fixed;
-  top: 6%;
+  top: 9%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 12;
-  width: min(520px, 70vw);
+  width: min(680px, 80vw);
   text-align: center;
-  padding: 1.5rem 2rem;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2rem 2.5rem;
+  background: rgba(10, 10, 30, 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(124, 58, 237, 0.4);
   border-radius: 16px;
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.15);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.6s ease;
@@ -273,7 +274,7 @@ a:hover {
 }
 
 .ws-title {
-  font-size: 1.6rem;
+  font-size: 2rem;
   font-weight: 700;
   color: #ffffff;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
@@ -291,8 +292,8 @@ a:hover {
 .ws-award {
   font-size: 0.7rem;
   font-weight: 600;
-  color: #fbbf24;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+  color: #facc15;
+  text-shadow: 0 0 8px rgba(250, 204, 21, 0.4);
   margin-bottom: 0.75rem;
 }
 
@@ -322,17 +323,32 @@ a:hover {
   border: 1px solid rgba(124, 58, 237, 0.4);
 }
 
+.ws-github {
+  display: inline-block;
+  margin-top: 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #a78bfa;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.ws-github:hover {
+  color: #c4b5fd;
+  text-decoration: underline;
+}
+
 /* ============================================
    DASHBOARD VIDEO OVERLAY
    ============================================ */
 #dash-video {
   position: fixed;
-  left: 32%;
-  top: 52%;
+  left: 49%;
+  top: 84%;
   transform: translate(-50%, -50%);
   z-index: 12;
-  width: 220px;
-  height: 140px;
+  width: 240px;
+  height: 155px;
   background: rgba(10, 10, 20, 0.9);
   border: 2px solid rgba(124, 58, 237, 0.5);
   border-radius: 6px;
