@@ -211,14 +211,14 @@ function enterCar() {
 
   // Cockpit camera: driver seat position
   cockpitBasePosition.set(
-    modelCenter.x - modelSize.x * 0.15,
-    modelCenter.y + modelSize.y * 0.15,
-    modelCenter.z
+    modelCenter.x - modelSize.x * 0.22,
+    modelCenter.y + modelSize.y * 0.08,
+    modelCenter.z - modelSize.z * 0.05
   );
   cockpitLookTarget.set(
     modelCenter.x,
-    modelCenter.y + modelSize.y * 0.1,
-    modelCenter.z + modelSize.z * 0.4
+    modelCenter.y + modelSize.y * 0.35,
+    modelCenter.z + modelSize.z * 0.5
   );
 
   const timeline = gsap.timeline({
