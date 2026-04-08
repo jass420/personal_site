@@ -47,7 +47,7 @@ export function openPanel(panelId) {
   activePanel = panelId;
 
   // Lazy-load YouTube iframes
-  if (panelId === 'videos') {
+  if (panelId === 'roomie-video') {
     panel.querySelectorAll('iframe[data-src]').forEach((iframe) => {
       if (!iframe.src || iframe.src === 'about:blank') {
         iframe.src = iframe.dataset.src;

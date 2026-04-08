@@ -19,12 +19,8 @@ let tooltip = null;
 
 // Map from hotspot ID to panel ID
 const PANEL_MAP = {
-  steering_wheel: 'projects',
-  infotainment_screen: 'experience',
-  gps_display: 'about',
-  rearview_mirror: 'videos',
-  dashboard_gauges: 'skills',
-  glove_box: 'blog',
+  infotainment_screen: 'roomie-video',
+  steering_wheel: 'roomie-details',
 };
 
 export function initCockpitInteraction(cam, hotspots) {
@@ -126,22 +122,22 @@ function onTouchEnd(event) {
 }
 
 function applyHover(mesh) {
-  mesh.material.opacity = 0.55;
-  mesh.material.emissiveIntensity = 0.8;
+  mesh.material.opacity = 0.8;
+  mesh.material.color.setHex(0xa78bfa);
   mesh.children.forEach(child => {
     if (child.userData.isRing) {
-      child.material.opacity = 0.7;
+      child.material.opacity = 0.9;
     }
   });
 }
 
 function resetHover() {
   if (hoveredMesh) {
-    hoveredMesh.material.opacity = 0.25;
-    hoveredMesh.material.emissiveIntensity = 0.3;
+    hoveredMesh.material.opacity = 0.5;
+    hoveredMesh.material.color.setHex(0x7c3aed);
     hoveredMesh.children.forEach(child => {
       if (child.userData.isRing) {
-        child.material.opacity = 0.35;
+        child.material.opacity = 0.6;
       }
     });
     hoveredMesh = null;

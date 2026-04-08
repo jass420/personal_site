@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { loadCar, showHotspots, animateHotspots } from './car.js';
-import { initPanels, closePanel, getActivePanel } from './panels.js';
+import { loadCar, showHotspots, animateHotspots, SCREEN_POSITION } from './car.js';
+import { initPanels, openPanel, closePanel, getActivePanel } from './panels.js';
 import { initCockpitInteraction, setCockpitEnabled } from './cockpit.js';
 
 // ============================================
@@ -116,6 +116,14 @@ async function init() {
     });
   });
 
+  // Cockpit screen click → open Roomie video panel
+  const screenEl = document.getElementById('cockpit-screen');
+  if (screenEl) {
+    screenEl.addEventListener('click', () => {
+      openPanel('roomie-video');
+    });
+  }
+
   // Start render loop
   animate();
 }
@@ -125,12 +133,12 @@ async function init() {
 // ============================================
 
 function setupLighting() {
-  // Ambient
-  const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+  // Ambient — strong so interior is never pitch black
+  const ambient = new THREE.AmbientLight(0xffffff, 1.8);
   scene.add(ambient);
 
   // Key light
-  const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
+  const keyLight = new THREE.DirectionalLight(0xffffff, 2.0);
   keyLight.position.set(5, 8, 5);
   keyLight.castShadow = true;
   keyLight.shadow.mapSize.width = 1024;
@@ -144,20 +152,32 @@ function setupLighting() {
   scene.add(keyLight);
 
   // Fill light
-  const fillLight = new THREE.DirectionalLight(0xc8c8ff, 0.5);
+  const fillLight = new THREE.DirectionalLight(0xc8c8ff, 1.0);
   fillLight.position.set(-3, 2, -3);
   scene.add(fillLight);
 
   // Purple accent from below (reflected light effect)
-  const accentLight = new THREE.PointLight(0x7c3aed, 0.5, 8);
+  const accentLight = new THREE.PointLight(0x7c3aed, 0.8, 10);
   accentLight.position.set(0, 0.1, 0);
   scene.add(accentLight);
 
-  // Cockpit interior light (starts dim, brightens on enter)
-  const cockpitLight = new THREE.PointLight(0x7c3aed, 0.0, 3);
-  cockpitLight.position.set(0, 1.0, 0.3);
+  // Cockpit interior lights (start dim, brighten on enter)
+  const cockpitLight = new THREE.PointLight(0xffffff, 0.0, 5);
+  cockpitLight.position.set(0, 1.2, 0.3);
   cockpitLight.name = 'cockpit_light';
   scene.add(cockpitLight);
+
+  // Extra cockpit fill from above-front
+  const cockpitFill = new THREE.PointLight(0xffffff, 0.0, 4);
+  cockpitFill.position.set(0, 1.0, -0.2);
+  cockpitFill.name = 'cockpit_fill';
+  scene.add(cockpitFill);
+
+  // Dashboard accent light (purple glow on dash)
+  const dashLight = new THREE.PointLight(0x7c3aed, 0.0, 3);
+  dashLight.position.set(0, 0.8, 0.5);
+  dashLight.name = 'dash_light';
+  scene.add(dashLight);
 }
 
 // ============================================
@@ -244,11 +264,19 @@ function enterCar() {
       // Show HUD
       document.getElementById('cockpit-hud').classList.add('visible');
 
-      // Brighten cockpit light
-      const cockpitLight = scene.getObjectByName('cockpit_light');
-      if (cockpitLight) {
-        gsap.to(cockpitLight, { intensity: 1.5, duration: 0.5 });
+      // Load the video on the cockpit screen
+      const cockpitVideo = document.getElementById('cockpit-video');
+      if (cockpitVideo && !cockpitVideo.src) {
+        cockpitVideo.src = 'https://www.youtube.com/embed/0mxCZzDBado';
       }
+
+      // Brighten all cockpit lights
+      const cockpitLight = scene.getObjectByName('cockpit_light');
+      const cockpitFill = scene.getObjectByName('cockpit_fill');
+      const dashLight = scene.getObjectByName('dash_light');
+      if (cockpitLight) gsap.to(cockpitLight, { intensity: 5.0, duration: 0.5 });
+      if (cockpitFill) gsap.to(cockpitFill, { intensity: 3.0, duration: 0.5 });
+      if (dashLight) gsap.to(dashLight, { intensity: 2.0, duration: 0.5 });
     },
   });
 
@@ -297,11 +325,17 @@ function exitCar() {
   showHotspots(carData.hotspots, false);
   cockpitLookEnabled = false;
 
-  // Dim cockpit light
+  // Hide screen overlay
+  const screenOverlay = document.getElementById('cockpit-screen');
+  if (screenOverlay) screenOverlay.style.display = 'none';
+
+  // Dim all cockpit lights
   const cockpitLight = scene.getObjectByName('cockpit_light');
-  if (cockpitLight) {
-    gsap.to(cockpitLight, { intensity: 0, duration: 0.5 });
-  }
+  const cockpitFill = scene.getObjectByName('cockpit_fill');
+  const dashLight = scene.getObjectByName('dash_light');
+  if (cockpitLight) gsap.to(cockpitLight, { intensity: 0, duration: 0.5 });
+  if (cockpitFill) gsap.to(cockpitFill, { intensity: 0, duration: 0.5 });
+  if (dashLight) gsap.to(dashLight, { intensity: 0, duration: 0.5 });
 
   const timeline = gsap.timeline({
     onComplete: () => {
@@ -377,6 +411,22 @@ function animate() {
   // Animate hotspots
   if (carData && carData.hotspots) {
     animateHotspots(carData.hotspots, elapsed);
+  }
+
+  // Position the video screen overlay in cockpit mode
+  const screenEl = document.getElementById('cockpit-screen');
+  if (screenEl) {
+    if (state === 'COCKPIT' && !getActivePanel()) {
+      const screenWorld = SCREEN_POSITION.clone();
+      screenWorld.project(camera);
+      const x = (screenWorld.x * 0.5 + 0.5) * window.innerWidth;
+      const y = (-screenWorld.y * 0.5 + 0.5) * window.innerHeight;
+      screenEl.style.left = x + 'px';
+      screenEl.style.top = y + 'px';
+      screenEl.style.display = 'block';
+    } else {
+      screenEl.style.display = 'none';
+    }
   }
 
   renderer.render(scene, camera);

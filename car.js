@@ -6,42 +6,21 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 // Positioned relative to the car model's interior
 // ============================================
 
+// Screen position (infotainment) — exported for overlay projection
+export const SCREEN_POSITION = new THREE.Vector3(0, 0.95, 0.5);
+
 const HOTSPOTS = [
   {
-    id: 'steering_wheel',
-    label: 'Projects',
-    position: new THREE.Vector3(-0.35, 0.85, 0.2),
-    size: 0.12,
-  },
-  {
     id: 'infotainment_screen',
-    label: 'Experience',
-    position: new THREE.Vector3(0, 0.95, 0.45),
-    size: 0.14,
+    label: 'Roomie — AI Interior Designer',
+    position: new THREE.Vector3(0, 0.95, 0.5),
+    size: 0.18,
   },
   {
-    id: 'gps_display',
-    label: 'About Me',
-    position: new THREE.Vector3(0, 0.78, 0.42),
-    size: 0.1,
-  },
-  {
-    id: 'rearview_mirror',
-    label: 'Videos',
-    position: new THREE.Vector3(0, 1.25, 0.15),
-    size: 0.1,
-  },
-  {
-    id: 'dashboard_gauges',
-    label: 'Skills',
-    position: new THREE.Vector3(-0.35, 0.95, 0.42),
-    size: 0.1,
-  },
-  {
-    id: 'glove_box',
-    label: 'Blog & Education',
-    position: new THREE.Vector3(0.38, 0.72, 0.35),
-    size: 0.1,
+    id: 'steering_wheel',
+    label: 'About Roomie',
+    position: new THREE.Vector3(-0.35, 0.85, 0.25),
+    size: 0.15,
   },
 ];
 
@@ -53,14 +32,13 @@ function createHotspots(parent) {
   const hotspotMeshes = [];
 
   for (const def of HOTSPOTS) {
-    const geo = new THREE.SphereGeometry(def.size, 16, 16);
-    const mat = new THREE.MeshStandardMaterial({
+    const geo = new THREE.SphereGeometry(def.size, 24, 24);
+    const mat = new THREE.MeshBasicMaterial({
       color: 0x7c3aed,
-      emissive: 0x7c3aed,
-      emissiveIntensity: 0.3,
       transparent: true,
       opacity: 0.0,
-      roughness: 0.5,
+      depthTest: false,
+      depthWrite: false,
     });
 
     const mesh = new THREE.Mesh(geo, mat);
@@ -69,18 +47,21 @@ function createHotspots(parent) {
     mesh.userData.label = def.label;
     mesh.userData.baseOpacity = 0.0;
     mesh.position.copy(def.position);
-    mesh.renderOrder = 10;
+    mesh.renderOrder = 999;
 
     // Outer glow ring
-    const ringGeo = new THREE.RingGeometry(def.size * 0.8, def.size * 0.95, 32);
+    const ringGeo = new THREE.RingGeometry(def.size * 1.1, def.size * 1.3, 32);
     const ringMat = new THREE.MeshBasicMaterial({
       color: 0xa78bfa,
       transparent: true,
       opacity: 0.0,
       side: THREE.DoubleSide,
+      depthTest: false,
+      depthWrite: false,
     });
     const ring = new THREE.Mesh(ringGeo, ringMat);
     ring.userData.isRing = true;
+    ring.renderOrder = 999;
     mesh.add(ring);
 
     parent.add(mesh);
@@ -96,14 +77,11 @@ function createHotspots(parent) {
 
 export function showHotspots(hotspots, visible) {
   for (const mesh of hotspots) {
-    const targetOpacity = visible ? 0.25 : 0.0;
-    mesh.material.opacity = targetOpacity;
-    mesh.material.emissiveIntensity = visible ? 0.3 : 0.0;
+    mesh.material.opacity = visible ? 0.6 : 0.0;
 
-    // Show rings
     mesh.children.forEach(child => {
       if (child.userData.isRing) {
-        child.material.opacity = visible ? 0.35 : 0.0;
+        child.material.opacity = visible ? 0.7 : 0.0;
       }
     });
   }
@@ -117,15 +95,14 @@ export function animateHotspots(hotspots, time) {
   for (let i = 0; i < hotspots.length; i++) {
     const mesh = hotspots[i];
     if (mesh.material.opacity > 0.01) {
-      const pulse = 0.2 + Math.sin(time * 2 + i * 1.2) * 0.08;
+      const pulse = 0.45 + Math.sin(time * 2.5 + i * 1.5) * 0.15;
       mesh.material.opacity = pulse;
-      mesh.material.emissiveIntensity = 0.2 + Math.sin(time * 2 + i * 1.2) * 0.15;
 
-      // Slow rotation on rings
+      // Slow rotation + pulse on rings
       mesh.children.forEach(child => {
         if (child.userData.isRing) {
-          child.rotation.z = time * 0.5 + i;
-          child.material.opacity = pulse * 1.2;
+          child.rotation.z = time * 0.8 + i;
+          child.material.opacity = pulse * 1.3;
         }
       });
     }
