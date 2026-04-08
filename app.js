@@ -13,12 +13,9 @@ let scene, camera, renderer, controls;
 let carData = null; // { model, hotspots, hotspotParent, modelBounds, modelCenter, modelSize }
 let clock;
 
-// Camera targets for cockpit look-around
+// Camera targets for cockpit
 let cockpitBasePosition = new THREE.Vector3();
 let cockpitLookTarget = new THREE.Vector3();
-let mouseOffset = { x: 0, y: 0 };
-let cockpitLookEnabled = false;
-let isDragging = false;
 
 // ============================================
 // INIT
@@ -95,9 +92,6 @@ async function init() {
 
   // Events
   window.addEventListener('resize', onResize);
-  window.addEventListener('mousemove', onGlobalMouseMove);
-  window.addEventListener('mousedown', () => { isDragging = true; });
-  window.addEventListener('mouseup', () => { isDragging = false; });
 
   // Hero button
   document.getElementById('enter-btn').addEventListener('click', enterCar);
@@ -257,7 +251,6 @@ function enterCar() {
   const timeline = gsap.timeline({
     onComplete: () => {
       state = 'COCKPIT';
-      cockpitLookEnabled = true;
       setCockpitEnabled(true);
       showHotspots(carData.hotspots, true);
 
@@ -323,7 +316,6 @@ function exitCar() {
   document.getElementById('cockpit-hud').classList.remove('visible');
   setCockpitEnabled(false);
   showHotspots(carData.hotspots, false);
-  cockpitLookEnabled = false;
 
   // Hide screen overlay
   const screenOverlay = document.getElementById('cockpit-screen');
@@ -367,29 +359,6 @@ function exitCar() {
 }
 
 // ============================================
-// COCKPIT LOOK-AROUND
-// ============================================
-
-function onGlobalMouseMove(event) {
-  if (!cockpitLookEnabled || state !== 'COCKPIT' || getActivePanel()) return;
-  if (!isDragging) return;
-
-  // Normalize mouse to -1..1
-  mouseOffset.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouseOffset.y = -(event.clientY / window.innerHeight) * 2 + 1;
-}
-
-function updateCockpitLook() {
-  if (!cockpitLookEnabled || state !== 'COCKPIT') return;
-
-  // Subtle camera offset based on mouse position
-  const lookX = cockpitLookTarget.x + mouseOffset.x * 0.5;
-  const lookY = cockpitLookTarget.y + mouseOffset.y * 0.2;
-
-  camera.lookAt(lookX, lookY, cockpitLookTarget.z);
-}
-
-// ============================================
 // RENDER LOOP
 // ============================================
 
@@ -403,9 +372,9 @@ function animate() {
     controls.update();
   }
 
-  // Cockpit look-around
+  // Keep camera pointed at dashboard in cockpit
   if (state === 'COCKPIT') {
-    updateCockpitLook();
+    camera.lookAt(cockpitLookTarget);
   }
 
   // Animate hotspots
@@ -415,9 +384,11 @@ function animate() {
 
   // Position the video screen overlay in cockpit mode
   const screenEl = document.getElementById('cockpit-screen');
-  if (screenEl) {
+  if (screenEl && carData) {
     if (state === 'COCKPIT' && !getActivePanel()) {
+      // Convert hotspot-local position to world coordinates
       const screenWorld = SCREEN_POSITION.clone();
+      carData.hotspotParent.localToWorld(screenWorld);
       screenWorld.project(camera);
       const x = (screenWorld.x * 0.5 + 0.5) * window.innerWidth;
       const y = (-screenWorld.y * 0.5 + 0.5) * window.innerHeight;
