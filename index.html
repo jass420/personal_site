@@ -55,83 +55,33 @@
     <button id="exit-btn" class="hud-exit-btn">
       &larr; Exit
     </button>
-    <p class="hud-hint">Hover over glowing elements to explore</p>
   </div>
 
-  <!-- ======================== COCKPIT SCREEN (video overlay) ======================== -->
-  <div id="cockpit-screen" style="display:none;">
-    <iframe id="cockpit-video" allowfullscreen loading="lazy"></iframe>
-    <p class="screen-label">Click to watch demo</p>
+  <!-- ======================== WINDSCREEN INFO OVERLAY ======================== -->
+  <div id="windscreen-info">
+    <h2 class="ws-title">Roomie</h2>
+    <p class="ws-subtitle">AI Interior Designer</p>
+    <p class="ws-award">Sophiie Hackathon 2026 &middot; 5th / 15</p>
+    <p class="ws-desc">
+      Upload a photo of your room and Roomie's AI agent autonomously finds matching furniture on Facebook Marketplace, compares prices, and messages sellers on your behalf.
+    </p>
+    <div class="ws-tags">
+      <span class="ws-tag">LangGraph</span>
+      <span class="ws-tag">GPT-4 Vision</span>
+      <span class="ws-tag">AI Agents</span>
+      <span class="ws-tag">Python</span>
+    </div>
   </div>
 
-  <!-- ======================== TOOLTIP ======================== -->
-  <div id="tooltip"></div>
+  <!-- ======================== DASHBOARD VIDEO OVERLAY ======================== -->
+  <div id="dash-video">
+    <iframe allowfullscreen loading="lazy"></iframe>
+    <p class="dash-label">Roomie Demo</p>
+  </div>
 
   <!-- ======================== PANEL OVERLAY ======================== -->
   <div id="panel-overlay" style="display:none;"></div>
   <button id="panel-close-btn" class="panel-close-btn" style="display:none;">&times;</button>
-
-  <!-- ======================== CONTENT PANELS ======================== -->
-
-  <!-- ROOMIE VIDEO -->
-  <div id="panel-roomie-video" class="content-panel" style="display:none;">
-    <h2 class="panel-title">Roomie Demo</h2>
-    <p class="panel-subtitle">Watch the AI Interior Designer in action.</p>
-
-    <div class="video-card">
-      <div class="video-embed">
-        <iframe data-src="https://www.youtube.com/embed/0mxCZzDBado" allowfullscreen loading="lazy"></iframe>
-      </div>
-      <div class="video-info"><h3>Roomie &ndash; AI Interior Designer</h3></div>
-    </div>
-
-    <div class="panel-section-label" style="margin-top:2rem;">How It Works</div>
-    <div class="about-content">
-      <p>Upload a photo of your room and Roomie's AI agent autonomously searches Facebook Marketplace for matching furniture, compares prices, and messages sellers on your behalf.</p>
-    </div>
-  </div>
-
-  <!-- ROOMIE DETAILS -->
-  <div id="panel-roomie-details" class="content-panel" style="display:none;">
-    <h2 class="panel-title">Roomie &ndash; AI Interior Designer</h2>
-    <p class="panel-subtitle">Sophiie Hackathon 2026 &ndash; 5th / 15</p>
-
-    <div class="about-content">
-      <p>Roomie is an AI-powered interior designer that takes a photo of your room and autonomously finds matching furniture on Facebook Marketplace. It uses a LangGraph multi-agent workflow to:</p>
-    </div>
-
-    <div class="featured-project">
-      <h3>What It Does</h3>
-      <ul>
-        <li>Analyses your room photo to understand style, colours, and dimensions</li>
-        <li>Searches Facebook Marketplace for furniture that fits your space</li>
-        <li>Compares prices and conditions across listings</li>
-        <li>Messages sellers on your behalf to negotiate and enquire</li>
-      </ul>
-    </div>
-
-    <div class="panel-section-label">Tech Stack</div>
-    <div class="card-grid">
-      <div class="card">
-        <div class="card-header"><h3>AI &amp; Agents</h3></div>
-        <p>LangGraph multi-agent workflow, GPT-4 Vision for room analysis, autonomous tool-calling agents</p>
-        <div class="tags">
-          <span class="tag">LangGraph</span>
-          <span class="tag">GPT-4 Vision</span>
-          <span class="tag">AI Agents</span>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header"><h3>Integration</h3></div>
-        <p>Facebook Marketplace scraping, automated messaging, price comparison engine</p>
-        <div class="tags">
-          <span class="tag">Python</span>
-          <span class="tag">Web Scraping</span>
-          <span class="tag">Automation</span>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- ======================== MOBILE FALLBACK ======================== -->
   <div id="mobile-fallback">

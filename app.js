@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { loadCar, showHotspots, animateHotspots, SCREEN_POSITION } from './car.js';
-import { initPanels, openPanel, closePanel, getActivePanel } from './panels.js';
+import { loadCar } from './car.js';
+import { initPanels, closePanel } from './panels.js';
 import { initCockpitInteraction, setCockpitEnabled } from './cockpit.js';
 
 // ============================================
@@ -10,8 +10,7 @@ import { initCockpitInteraction, setCockpitEnabled } from './cockpit.js';
 
 let state = 'LOADING'; // LOADING | EXTERIOR | TRANSITIONING | COCKPIT
 let scene, camera, renderer, controls;
-let carData = null; // { model, hotspots, hotspotParent, modelBounds, modelCenter, modelSize }
-let clock;
+let carData = null;
 
 // Camera targets for cockpit
 let cockpitBasePosition = new THREE.Vector3();
@@ -22,8 +21,6 @@ let cockpitLookTarget = new THREE.Vector3();
 // ============================================
 
 async function init() {
-  clock = new THREE.Clock();
-
   // Renderer
   const container = document.getElementById('canvas-container');
   renderer = new THREE.WebGLRenderer({
@@ -81,14 +78,10 @@ async function init() {
   }
 
   // Init panels
-  initPanels({
-    onPanelChange: (opened) => {
-      // Dim/brighten scene when panel opens/closes
-    },
-  });
+  initPanels({});
 
   // Init cockpit interactions
-  initCockpitInteraction(camera, carData ? carData.hotspots : []);
+  initCockpitInteraction();
 
   // Events
   window.addEventListener('resize', onResize);
@@ -104,19 +97,10 @@ async function init() {
     btn.addEventListener('click', () => {
       const panelId = btn.dataset.panel;
       if (panelId) {
-        // Import openPanel dynamically since mobile might not load Three.js
         import('./panels.js').then(({ openPanel }) => openPanel(panelId));
       }
     });
   });
-
-  // Cockpit screen click → open Roomie video panel
-  const screenEl = document.getElementById('cockpit-screen');
-  if (screenEl) {
-    screenEl.addEventListener('click', () => {
-      openPanel('roomie-video');
-    });
-  }
 
   // Start render loop
   animate();
@@ -150,8 +134,8 @@ function setupLighting() {
   fillLight.position.set(-3, 2, -3);
   scene.add(fillLight);
 
-  // Purple accent from below (reflected light effect)
-  const accentLight = new THREE.PointLight(0x7c3aed, 0.8, 10);
+  // Subtle purple accent from below
+  const accentLight = new THREE.PointLight(0x7c3aed, 0.4, 10);
   accentLight.position.set(0, 0.1, 0);
   scene.add(accentLight);
 
@@ -161,14 +145,13 @@ function setupLighting() {
   cockpitLight.name = 'cockpit_light';
   scene.add(cockpitLight);
 
-  // Extra cockpit fill from above-front
   const cockpitFill = new THREE.PointLight(0xffffff, 0.0, 4);
   cockpitFill.position.set(0, 1.0, -0.2);
   cockpitFill.name = 'cockpit_fill';
   scene.add(cockpitFill);
 
-  // Dashboard accent light (purple glow on dash)
-  const dashLight = new THREE.PointLight(0x7c3aed, 0.0, 3);
+  // Warm white dashboard glow (no more purple tint)
+  const dashLight = new THREE.PointLight(0xfff5e6, 0.0, 3);
   dashLight.position.set(0, 0.8, 0.5);
   dashLight.name = 'dash_light';
   scene.add(dashLight);
@@ -187,10 +170,8 @@ function onLoadProgress(fraction) {
 }
 
 function onModelLoaded() {
-  // Finalize loading bar
   onLoadProgress(1);
 
-  // Check for mobile
   const isMobile = window.innerWidth < 768;
   if (isMobile) {
     document.getElementById('mobile-fallback').classList.add('visible');
@@ -198,19 +179,15 @@ function onModelLoaded() {
     setTimeout(() => {
       document.getElementById('loading-screen').style.display = 'none';
     }, 800);
-    // Init panels for mobile too
-    initPanels({});
     state = 'EXTERIOR';
     return;
   }
 
-  // Fade out loading screen
   setTimeout(() => {
     document.getElementById('loading-screen').classList.add('fade-out');
     setTimeout(() => {
       document.getElementById('loading-screen').style.display = 'none';
     }, 800);
-    // Show hero
     document.getElementById('hero-overlay').classList.remove('hidden');
     state = 'EXTERIOR';
   }, 600);
@@ -224,18 +201,15 @@ function enterCar() {
   if (state !== 'EXTERIOR') return;
   state = 'TRANSITIONING';
 
-  // Hide hero
   document.getElementById('hero-overlay').classList.add('hidden');
 
-  // Disable orbit controls
   controls.enabled = false;
   controls.autoRotate = false;
 
-  // Calculate cockpit camera position based on model
   const modelCenter = carData.modelCenter;
   const modelSize = carData.modelSize;
 
-  // Cockpit camera: driver seat position (left side, inside)
+  // Cockpit camera: driver seat position
   cockpitBasePosition.set(
     modelCenter.x - modelSize.x * 0.15,
     modelCenter.y + modelSize.y * 0.15,
@@ -247,23 +221,25 @@ function enterCar() {
     modelCenter.z + modelSize.z * 0.4
   );
 
-  // GSAP animation: camera moves to cockpit
   const timeline = gsap.timeline({
     onComplete: () => {
       state = 'COCKPIT';
       setCockpitEnabled(true);
-      showHotspots(carData.hotspots, true);
 
       // Show HUD
       document.getElementById('cockpit-hud').classList.add('visible');
 
-      // Load the video on the cockpit screen
-      const cockpitVideo = document.getElementById('cockpit-video');
-      if (cockpitVideo && !cockpitVideo.src) {
-        cockpitVideo.src = 'https://www.youtube.com/embed/0mxCZzDBado';
+      // Show cockpit overlays (windscreen info + dash video)
+      document.getElementById('windscreen-info').classList.add('visible');
+      document.getElementById('dash-video').classList.add('visible');
+
+      // Load video iframe
+      const iframe = document.querySelector('#dash-video iframe');
+      if (iframe && !iframe.src) {
+        iframe.src = 'https://www.youtube.com/embed/0mxCZzDBado';
       }
 
-      // Brighten all cockpit lights
+      // Brighten cockpit lights
       const cockpitLight = scene.getObjectByName('cockpit_light');
       const cockpitFill = scene.getObjectByName('cockpit_fill');
       const dashLight = scene.getObjectByName('dash_light');
@@ -273,20 +249,16 @@ function enterCar() {
     },
   });
 
-  // Step 1: Move toward the car (approach from side)
-  const approachPos = {
+  // Step 1: Approach from side
+  timeline.to(camera.position, {
     x: modelCenter.x - modelSize.x * 0.6,
     y: modelCenter.y + modelSize.y * 0.3,
     z: modelCenter.z + modelSize.z * 0.1,
-  };
-
-  timeline.to(camera.position, {
-    ...approachPos,
     duration: 1.0,
     ease: 'power2.inOut',
   });
 
-  // Step 2: Slide into the cockpit
+  // Step 2: Slide into cockpit
   timeline.to(camera.position, {
     x: cockpitBasePosition.x,
     y: cockpitBasePosition.y,
@@ -295,7 +267,7 @@ function enterCar() {
     ease: 'power3.inOut',
   });
 
-  // Simultaneously rotate to face dashboard
+  // Simultaneously face dashboard
   timeline.to(controls.target, {
     x: cockpitLookTarget.x,
     y: cockpitLookTarget.y,
@@ -309,19 +281,15 @@ function exitCar() {
   if (state !== 'COCKPIT') return;
   state = 'TRANSITIONING';
 
-  // Close any open panel
   closePanel();
 
-  // Hide HUD and hotspots
+  // Hide HUD and overlays
   document.getElementById('cockpit-hud').classList.remove('visible');
+  document.getElementById('windscreen-info').classList.remove('visible');
+  document.getElementById('dash-video').classList.remove('visible');
   setCockpitEnabled(false);
-  showHotspots(carData.hotspots, false);
 
-  // Hide screen overlay
-  const screenOverlay = document.getElementById('cockpit-screen');
-  if (screenOverlay) screenOverlay.style.display = 'none';
-
-  // Dim all cockpit lights
+  // Dim cockpit lights
   const cockpitLight = scene.getObjectByName('cockpit_light');
   const cockpitFill = scene.getObjectByName('cockpit_fill');
   const dashLight = scene.getObjectByName('dash_light');
@@ -334,25 +302,18 @@ function exitCar() {
       state = 'EXTERIOR';
       controls.enabled = true;
       controls.autoRotate = true;
-
-      // Show hero
       document.getElementById('hero-overlay').classList.remove('hidden');
     },
   });
 
-  // Pull camera back out
   timeline.to(camera.position, {
-    x: 5,
-    y: 2.5,
-    z: 6,
+    x: 5, y: 2.5, z: 6,
     duration: 1.5,
     ease: 'power2.inOut',
   });
 
   timeline.to(controls.target, {
-    x: 0,
-    y: 0.6,
-    z: 0,
+    x: 0, y: 0.6, z: 0,
     duration: 1.5,
     ease: 'power2.inOut',
   }, '-=1.5');
@@ -365,9 +326,6 @@ function exitCar() {
 function animate() {
   requestAnimationFrame(animate);
 
-  const elapsed = clock.getElapsedTime();
-
-  // Update controls in exterior mode
   if (state === 'EXTERIOR' && controls.enabled) {
     controls.update();
   }
@@ -375,29 +333,6 @@ function animate() {
   // Keep camera pointed at dashboard in cockpit
   if (state === 'COCKPIT') {
     camera.lookAt(cockpitLookTarget);
-  }
-
-  // Animate hotspots
-  if (carData && carData.hotspots) {
-    animateHotspots(carData.hotspots, elapsed);
-  }
-
-  // Position the video screen overlay in cockpit mode
-  const screenEl = document.getElementById('cockpit-screen');
-  if (screenEl && carData) {
-    if (state === 'COCKPIT' && !getActivePanel()) {
-      // Convert hotspot-local position to world coordinates
-      const screenWorld = SCREEN_POSITION.clone();
-      carData.hotspotParent.localToWorld(screenWorld);
-      screenWorld.project(camera);
-      const x = (screenWorld.x * 0.5 + 0.5) * window.innerWidth;
-      const y = (-screenWorld.y * 0.5 + 0.5) * window.innerHeight;
-      screenEl.style.left = x + 'px';
-      screenEl.style.top = y + 'px';
-      screenEl.style.display = 'block';
-    } else {
-      screenEl.style.display = 'none';
-    }
   }
 
   renderer.render(scene, camera);
