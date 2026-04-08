@@ -45,6 +45,30 @@ const CARS = [
     position: { x: 4, y: 0, z: -1.5 },
     rotation: -0.5,
   },
+  {
+    model: 'bmw_m3_coupe_e30_1986/scene.gltf',
+    name: 'Research Paper Link Explorer',
+    subtitle: 'Research Graph Backend',
+    award: 'Sep \u2013 Nov 2025',
+    desc: 'Developed a research paper graph generation backend using Flask and SQLAlchemy to help academics find complex relationships between papers through filters such as thematic similarity, citations, and co-authors.',
+    tags: ['Flask', 'SQLAlchemy', 'OpenAlex', 'arXiv'],
+    github: null,
+    video: null,
+    position: { x: -7, y: 0, z: -4 },
+    rotation: 0.6,
+  },
+  {
+    model: 'lancia_stratos_hf_-_rally_-_alitalia_livery.glb',
+    name: 'Valorant Match Predictor',
+    subtitle: 'Esports ML Prediction',
+    award: 'UQCS Hackathon 2024 \u00b7 People\'s Choice Award',
+    tags: ['Python', 'XGBoost', 'ML'],
+    desc: 'Built a match outcome predictor for Valorant using a gradient boosting model (Python, XGBoost) achieving 82% accuracy.',
+    github: 'https://github.com/jass420',
+    video: null,
+    position: { x: 7, y: 0, z: -3.5 },
+    rotation: -0.4,
+  },
 ];
 
 let currentCarIndex = 0;
@@ -59,8 +83,8 @@ let carDataArray = [];
 let scrollCooldown = false;
 
 // Camera targets
-const SHOWROOM_CAM = { x: 0, y: 4, z: 10 };
-const SHOWROOM_TARGET = { x: 0, y: 0, z: -1 };
+const SHOWROOM_CAM = { x: 0, y: 5, z: 14 };
+const SHOWROOM_TARGET = { x: 0, y: 0, z: -2 };
 
 let cockpitBasePosition = new THREE.Vector3();
 let cockpitLookTarget = new THREE.Vector3();
@@ -111,8 +135,8 @@ async function init() {
   controls.autoRotate = false;
   controls.maxPolarAngle = Math.PI / 2.1;
   controls.minPolarAngle = 0.2;
-  controls.maxDistance = 14;
-  controls.minDistance = 5;
+  controls.maxDistance = 20;
+  controls.minDistance = 8;
   controls.target.set(SHOWROOM_TARGET.x, SHOWROOM_TARGET.y, SHOWROOM_TARGET.z);
   controls.enablePan = false;
   controls.enableZoom = false;
