@@ -181,20 +181,32 @@ a:hover {
 }
 
 .section-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-size: 0.7rem;
-  font-weight: 600;
+  position: fixed;
+  font-size: 1.1rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: #7c3aed;
-  padding: 0.3rem 0.8rem;
-  background: rgba(10, 10, 30, 0.6);
-  border: 1px solid rgba(124, 58, 237, 0.25);
-  border-radius: 6px;
+  letter-spacing: 0.2em;
+  color: #a78bfa;
+  padding: 0.5rem 1.2rem;
+  background: rgba(10, 10, 30, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(124, 58, 237, 0.4);
+  border-radius: 8px;
   white-space: nowrap;
   pointer-events: none;
+  z-index: 12;
+}
+
+.section-header--projects {
+  left: 50%;
+  top: 52%;
+  transform: translateX(-50%);
+}
+
+.section-header--work {
+  left: 50%;
+  top: 28%;
+  transform: translateX(-50%);
 }
 
 #hero-overlay > * {

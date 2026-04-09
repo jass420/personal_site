@@ -19,10 +19,10 @@ const CARS = [
     tags: ['Python', 'LangGraph', 'RAG', 'AWS', 'Next.js', 'Three.js', 'Flask', 'Docker', 'XGBoost', 'Deep Learning'],
     github: null,
     video: null,
-    position: { x: 0, y: 0, z: 3 },
+    position: { x: 0, y: 0, z: 8 },
     rotation: 0.0,
     scale: 0.8,
-    cockpit: { posX: 0, posY: 0.3, posZ: 4.0, lookY: 0.2, lookZ: 0 },
+    cockpit: { posX: 0, posY: 0.3, posZ: 9.0, lookY: 0.2, lookZ: 0 },
   },
   {
     model: '2016_pagani_huayra_bc/scene.gltf',
@@ -35,7 +35,7 @@ const CARS = [
     github: 'https://github.com/JasMatharu/roomie',
     video: 'https://www.youtube.com/embed/0mxCZzDBado',
     videoPos: { left: '51%', top: '84%' },
-    position: { x: -4, y: 0, z: 0 },
+    position: { x: -3, y: 0, z: 5 },
     rotation: -0.3,
     cockpit: { posX: -0.005, posY: 0.20, posZ: 0, lookY: 0.15, lookZ: 0.4 },
   },
@@ -61,7 +61,7 @@ const CARS = [
       },
     ],
     video: null,
-    position: { x: 4, y: 0, z: 0 },
+    position: { x: 3, y: 0, z: 5 },
     rotation: -0.5,
     cockpit: { posX: -0.01, posY: 0.35, posZ: -0.18, lookY: 0.10, lookZ: 0.4 },
   },
@@ -76,37 +76,10 @@ const CARS = [
     github: 'https://github.com/jass420',
     video: 'https://www.youtube.com/embed/p7RATnINbfk',
     videoPos: { left: '52%', top: '90%' },
-    position: { x: -8, y: 0, z: -1 },
+    position: { x: 8, y: 0, z: 3 },
     rotation: 0.5,
     cockpit: { posX: -0.05, posY: 0.25, posZ: -0.06, lookY: 0.10, lookZ: 0.4 },
 
-  },
-  {
-    model: '2006__ford_gt_lm_spec_ll_test_car/scene.gltf',
-    category: 'work',
-    projects: [
-      {
-        name: 'Gradianza AI',
-        subtitle: 'AI Receptionist Platform',
-        award: 'Nov 2025 \u2013 Present',
-        desc: 'Architecting an AI-powered receptionist handling bookings for hotels and restaurants. Currently deployed and scaled to handle hundreds of calls per day. Built custom agents and a RAG pipeline with full privacy.',
-        tags: ['AI Agents', 'RAG', 'LangGraph', 'Voice AI'],
-        github: null,
-      },
-      {
-        name: 'The Diet Science',
-        subtitle: 'AI-Powered Nutritionist',
-        award: 'Feb 2026 \u2013 Present',
-        desc: 'Architecting an AI-powered nutritionist using RAG with Pinecone and OpenAI to retrieve personalised nutrition information via a LangGraph agent; currently in trial with 15 users.',
-        tags: ['RAG', 'Pinecone', 'OpenAI', 'LangGraph', 'Python'],
-        github: null,
-      },
-    ],
-    video: null,
-    videoPos: { left: '52%', top: '90%' },
-    position: { x: -4, y: 0, z: -5 },
-    rotation: 2.5,
-    cockpit: { posX: 0.09, posY: 0.2, posZ: 0.01, lookY: 0.10, lookZ: -0.4 },
   },
   {
     model: '2012_aston_martin_vantage_gte/scene.gltf',
@@ -139,23 +112,35 @@ const CARS = [
     ],
     video: null,
     videoPos: { left: '52%', top: '90%' },
-    position: { x: 4, y: 0, z: -5 },
+    position: { x: 3, y: 0, z: -4 },
     rotation: 0.3,
     cockpit: { posX: -0.01, posY: 0.35, posZ: -0.18, lookY: 0.10, lookZ: 0.4 },
 
   },
   {
     model: '1991_rwb_porsche_911_964/scene.gltf',
-    category: 'project',
-    name: 'Coming Soon',
-    subtitle: 'Project TBD',
-    award: '',
-    desc: 'A new project will be showcased here soon.',
-    tags: [],
-    github: null,
+    category: 'work',
+    projects: [
+      {
+        name: 'Gradianza AI',
+        subtitle: 'AI Receptionist Platform',
+        award: 'Nov 2025 \u2013 Present',
+        desc: 'Architecting an AI-powered receptionist handling bookings for hotels and restaurants. Currently deployed and scaled to handle hundreds of calls per day. Built custom agents and a RAG pipeline with full privacy.',
+        tags: ['AI Agents', 'RAG', 'LangGraph', 'Voice AI'],
+        github: null,
+      },
+      {
+        name: 'The Diet Science',
+        subtitle: 'AI-Powered Nutritionist',
+        award: 'Feb 2026 \u2013 Present',
+        desc: 'Architecting an AI-powered nutritionist using RAG with Pinecone and OpenAI to retrieve personalised nutrition information via a LangGraph agent; currently in trial with 15 users.',
+        tags: ['RAG', 'Pinecone', 'OpenAI', 'LangGraph', 'Python'],
+        github: null,
+      },
+    ],
     video: null,
-    position: { x: 8, y: 0, z: -1 },
-    rotation: -0.4,
+    position: { x: -3, y: 0, z: -4 },
+    rotation: 0.4,
   },
 ];
 
@@ -171,8 +156,8 @@ let carDataArray = [];
 let scrollCooldown = false;
 
 // Camera targets
-const SHOWROOM_CAM = { x: 0, y: 5, z: 12 };
-const SHOWROOM_TARGET = { x: 0, y: 0, z: -3 };
+const SHOWROOM_CAM = { x: 0, y: 6, z: 16 };
+const SHOWROOM_TARGET = { x: 0, y: 0, z: -1 };
 
 let cockpitBasePosition = new THREE.Vector3();
 let cockpitLookTarget = new THREE.Vector3();
@@ -753,22 +738,19 @@ function transitionToPrevCar() {
 // ============================================
 
 // Section header world positions (computed after models load)
-const sectionHeaders = [
-  { id: 'header-projects', label: 'Projects', category: 'project' },
-  { id: 'header-work', label: 'Work Experience', category: 'work' },
-];
-
 function createCarLabels() {
   const container = document.getElementById('car-labels');
 
-  // Create section headers
-  sectionHeaders.forEach(h => {
-    const header = document.createElement('div');
-    header.className = 'section-header';
-    header.id = h.id;
-    header.textContent = h.label;
-    container.appendChild(header);
-  });
+  // Create fixed section headers
+  const projectsHeader = document.createElement('div');
+  projectsHeader.className = 'section-header section-header--projects';
+  projectsHeader.textContent = 'Projects';
+  container.appendChild(projectsHeader);
+
+  const workHeader = document.createElement('div');
+  workHeader.className = 'section-header section-header--work';
+  workHeader.textContent = 'Work Experience';
+  container.appendChild(workHeader);
 
   // Create car labels
   CARS.forEach((car, i) => {
@@ -796,37 +778,6 @@ function createCarLabels() {
 }
 
 function updateCarLabels() {
-  // Update section headers
-  sectionHeaders.forEach(h => {
-    const el = document.getElementById(h.id);
-    if (!el) return;
-
-    // Compute average position of cars in this category
-    let sumX = 0, sumY = 0, sumZ = 0, count = 0;
-    CARS.forEach((car, i) => {
-      if (car.category === h.category && carDataArray[i]) {
-        const mc = carDataArray[i].modelCenter;
-        const ms = carDataArray[i].modelSize;
-        sumX += mc.x;
-        sumY += mc.y + ms.y * 0.9;
-        sumZ += mc.z;
-        count++;
-      }
-    });
-    if (count === 0) { el.style.display = 'none'; return; }
-
-    const pos = new THREE.Vector3(sumX / count, sumY / count, sumZ / count);
-    pos.project(camera);
-
-    const x = (pos.x * 0.5 + 0.5) * window.innerWidth;
-    const y = (-pos.y * 0.5 + 0.5) * window.innerHeight;
-
-    if (pos.z > 1) { el.style.display = 'none'; return; }
-
-    el.style.display = '';
-    el.style.transform = `translate(-50%, -100%) translate(${x}px, ${y}px)`;
-  });
-
   // Update car labels
   const labels = document.querySelectorAll('.car-label');
   labels.forEach((label, i) => {
