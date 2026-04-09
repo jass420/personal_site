@@ -10,6 +10,20 @@ import { initCockpitInteraction, setCockpitEnabled } from './cockpit.js';
 
 const CARS = [
   {
+    model: 'lego_man/scene.gltf',
+    name: 'Skills & Expertise',
+    subtitle: 'What I Work With',
+    award: '',
+    desc: 'AI/ML engineering, full-stack development, and cloud infrastructure. Focused on building production-ready intelligent systems.',
+    tags: ['Python', 'LangGraph', 'RAG', 'AWS', 'Next.js', 'Three.js', 'Flask', 'Docker', 'XGBoost', 'Deep Learning'],
+    github: null,
+    video: null,
+    position: { x: 0, y: 0, z: 2 },
+    rotation: 0.0,
+    scale: 0.8,
+    cockpit: { posX: 0, posY: 0.3, posZ: 4.0, lookY: 0.2, lookZ: 0 },
+  },
+  {
     model: '2016_pagani_huayra_bc/scene.gltf',
     name: 'Roomie',
     subtitle: 'AI Interior Designer',
@@ -18,7 +32,7 @@ const CARS = [
     tags: ['LangGraph', 'GPT-4 Vision', 'AI Agents', 'Python'],
     github: 'https://github.com/JasMatharu/roomie',
     video: 'https://www.youtube.com/embed/0mxCZzDBado',
-    position: { x: 0, y: 0, z: 0 },
+    position: { x: 0, y: 0, z: -5 },
     rotation: -0.3,
     cockpit: { posX: -0.005, posY: 0.20, posZ: 0, lookY: 0.15, lookZ: 0.4 },
   },
@@ -85,7 +99,7 @@ let carDataArray = [];
 let scrollCooldown = false;
 
 // Camera targets
-const SHOWROOM_CAM = { x: 0, y: 5, z: 14 };
+const SHOWROOM_CAM = { x: 0, y: 6, z: 16 };
 const SHOWROOM_TARGET = { x: 0, y: 0, z: -2 };
 
 let cockpitBasePosition = new THREE.Vector3();
@@ -137,7 +151,7 @@ async function init() {
   controls.autoRotate = false;
   controls.maxPolarAngle = Math.PI / 2.1;
   controls.minPolarAngle = 0.2;
-  controls.maxDistance = 20;
+  controls.maxDistance = 24;
   controls.minDistance = 8;
   controls.target.set(SHOWROOM_TARGET.x, SHOWROOM_TARGET.y, SHOWROOM_TARGET.z);
   controls.enablePan = false;
@@ -155,7 +169,8 @@ async function init() {
         new THREE.Vector3(car.position.x, car.position.y, car.position.z),
         car.rotation,
         `car_${i}`,
-        i === 0 ? onLoadProgress : null
+        i === 0 ? onLoadProgress : null,
+        car.scale
       )
     );
     carDataArray = await Promise.all(loadPromises);
@@ -325,9 +340,22 @@ function onCanvasClick(event) {
 // POPULATE OVERLAYS
 // ============================================
 
+function isLegoMan() {
+  return CARS[currentCarIndex].model.includes('lego_man');
+}
+
 function populateOverlays() {
   const car = CARS[currentCarIndex];
 
+  if (isLegoMan()) {
+    // Populate speech bubble
+    document.querySelector('.sb-title').textContent = car.name;
+    document.querySelector('.sb-desc').textContent = car.desc;
+    document.querySelector('.sb-tags').innerHTML = car.tags.map((t) => `<span class="ws-tag">${t}</span>`).join('');
+    return;
+  }
+
+  // Populate windscreen overlay for cars
   document.querySelector('.ws-title').textContent = car.name;
   document.querySelector('.ws-subtitle').textContent = car.subtitle;
   document.querySelector('.ws-award').textContent = car.award;
@@ -353,6 +381,20 @@ function populateOverlays() {
     iframe.src = '';
     dashVideo.classList.remove('visible');
   }
+}
+
+function showOverlay() {
+  if (isLegoMan()) {
+    document.getElementById('speech-bubble').classList.add('visible');
+  } else {
+    document.getElementById('windscreen-info').classList.add('visible');
+  }
+}
+
+function hideOverlays() {
+  document.getElementById('windscreen-info').classList.remove('visible');
+  document.getElementById('speech-bubble').classList.remove('visible');
+  document.getElementById('dash-video').classList.remove('visible');
 }
 
 // ============================================
@@ -419,7 +461,7 @@ function enterCar() {
       document.getElementById('cockpit-hud').classList.add('visible');
 
       populateOverlays();
-      document.getElementById('windscreen-info').classList.add('visible');
+      showOverlay();
 
       if (cockpitLight) gsap.to(cockpitLight, { intensity: 5.0, duration: 0.5 });
       if (cockpitFill) gsap.to(cockpitFill, { intensity: 3.0, duration: 0.5 });
@@ -478,8 +520,7 @@ function exitCar() {
   closePanel();
 
   document.getElementById('cockpit-hud').classList.remove('visible');
-  document.getElementById('windscreen-info').classList.remove('visible');
-  document.getElementById('dash-video').classList.remove('visible');
+  hideOverlays();
   setCockpitEnabled(false);
 
   const iframe = document.querySelector('#dash-video iframe');
@@ -532,8 +573,7 @@ function transitionToNextCar() {
 
   // Hide current cockpit overlays
   document.getElementById('cockpit-hud').classList.remove('visible');
-  document.getElementById('windscreen-info').classList.remove('visible');
-  document.getElementById('dash-video').classList.remove('visible');
+  hideOverlays();
   setCockpitEnabled(false);
 
   const iframe = document.querySelector('#dash-video iframe');
@@ -629,7 +669,7 @@ function transitionToNextCar() {
       document.getElementById('cockpit-hud').classList.add('visible');
 
       populateOverlays();
-      document.getElementById('windscreen-info').classList.add('visible');
+      showOverlay();
 
       if (cockpitLight) gsap.to(cockpitLight, { intensity: 5.0, duration: 0.5 });
       if (cockpitFill) gsap.to(cockpitFill, { intensity: 3.0, duration: 0.5 });
@@ -653,8 +693,7 @@ function transitionToPrevCar() {
 
   // Hide current cockpit overlays
   document.getElementById('cockpit-hud').classList.remove('visible');
-  document.getElementById('windscreen-info').classList.remove('visible');
-  document.getElementById('dash-video').classList.remove('visible');
+  hideOverlays();
   setCockpitEnabled(false);
 
   const iframe = document.querySelector('#dash-video iframe');
@@ -752,7 +791,7 @@ function transitionToPrevCar() {
       document.getElementById('cockpit-hud').classList.add('visible');
 
       populateOverlays();
-      document.getElementById('windscreen-info').classList.add('visible');
+      showOverlay();
 
       if (cockpitLight) gsap.to(cockpitLight, { intensity: 5.0, duration: 0.5 });
       if (cockpitFill) gsap.to(cockpitFill, { intensity: 3.0, duration: 0.5 });

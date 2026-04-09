@@ -7,7 +7,7 @@ const loader = new GLTFLoader();
 // Load a car at a specific showroom position
 // ============================================
 
-export function loadCarAt(scene, modelPath, position, rotationY, name, onProgress) {
+export function loadCarAt(scene, modelPath, position, rotationY, name, onProgress, targetScale) {
   return new Promise((resolve, reject) => {
     loader.load(
       modelPath,
@@ -19,7 +19,7 @@ export function loadCarAt(scene, modelPath, position, rotationY, name, onProgres
         const box = new THREE.Box3().setFromObject(model);
         const size = box.getSize(new THREE.Vector3());
         const maxDim = Math.max(size.x, size.y, size.z);
-        const scale = 2.5 / maxDim;
+        const scale = (targetScale || 2.5) / maxDim;
         model.scale.setScalar(scale);
 
         // Recalculate bounds after scaling
