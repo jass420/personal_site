@@ -32,7 +32,7 @@ const CARS = [
     tags: ['LangGraph', 'GPT-4 Vision', 'AI Agents', 'Python'],
     github: 'https://github.com/JasMatharu/roomie',
     video: 'https://www.youtube.com/embed/0mxCZzDBado',
-    position: { x: 0, y: 0, z: -5 },
+    position: { x: 0, y: 0, z: -1 },
     rotation: -0.3,
     cockpit: { posX: -0.005, posY: 0.20, posZ: 0, lookY: 0.15, lookZ: 0.4 },
   },
@@ -83,7 +83,20 @@ const CARS = [
     github: null,
     video: null,
     position: { x: 7, y: 0, z: -3.5 },
-    rotation: -0.5,
+    rotation: 2.5,
+    cockpit: { posX: 0.09, posY: 0.2, posZ: 0.01, lookY: 0.10, lookZ: -0.4 },
+  },
+  {
+    model: '2013_aston_martin_vanquish/scene.gltf',
+    name: 'Valorant Match Predictor',
+    subtitle: 'Esports ML Prediction',
+    award: 'UQCS Hackathon 2024 \u00b7 People\'s Choice Award',
+    desc: 'Built a match outcome predictor for Valorant using a gradient boosting model (Python, XGBoost) achieving 82% accuracy.',
+    tags: ['Python', 'XGBoost', 'ML'],
+    github: 'https://github.com/jass420',
+    video: null,
+    position: { x: 0, y: 0, z: -6 },
+    rotation: 0.3,
   },
 ];
 
@@ -99,7 +112,7 @@ let carDataArray = [];
 let scrollCooldown = false;
 
 // Camera targets
-const SHOWROOM_CAM = { x: 0, y: 7, z: 18 };
+const SHOWROOM_CAM = { x: 0, y: 5, z: 12 };
 const SHOWROOM_TARGET = { x: 0, y: 0, z: -3 };
 
 let cockpitBasePosition = new THREE.Vector3();
@@ -566,12 +579,13 @@ function exitCar() {
   }, 0);
 }
 
-function transitionToNextCar() {
+function exitCarThenEnter(nextIndex) {
   if (state !== 'COCKPIT') return;
   state = 'TRANSITIONING';
   scrollCooldown = true;
 
-  // Hide current cockpit overlays
+  closePanel();
+
   document.getElementById('cockpit-hud').classList.remove('visible');
   hideOverlays();
   setCockpitEnabled(false);
@@ -579,7 +593,6 @@ function transitionToNextCar() {
   const iframe = document.querySelector('#dash-video iframe');
   if (iframe) iframe.src = '';
 
-  // Dim cockpit lights
   const cockpitLight = scene.getObjectByName('cockpit_light');
   const cockpitFill = scene.getObjectByName('cockpit_fill');
   const dashLight = scene.getObjectByName('dash_light');
@@ -587,225 +600,58 @@ function transitionToNextCar() {
   if (cockpitFill) gsap.to(cockpitFill, { intensity: 0, duration: 0.5 });
   if (dashLight) gsap.to(dashLight, { intensity: 0, duration: 0.5 });
 
-  // Rotate current car back to showroom angle
-  const prevCarModel = carDataArray[currentCarIndex].model;
-  const prevOriginalRotation = CARS[currentCarIndex].rotation;
+  const carModel = carDataArray[currentCarIndex].model;
+  const carCenter = carDataArray[currentCarIndex].modelCenter;
+  const originalRotation = CARS[currentCarIndex].rotation;
 
-  currentCarIndex++;
-
-  // After last car, return to showroom
-  if (currentCarIndex >= CARS.length) {
-    const timeline = gsap.timeline({
-      onComplete: () => {
-        recomputeBounds(currentCarIndex - 1);
-        state = 'EXTERIOR';
-        scrollCooldown = false;
-        controls.enabled = true;
-        document.getElementById('hero-overlay').classList.remove('hidden');
-      },
-    });
-
-    timeline.to(camera.position, {
-      x: SHOWROOM_CAM.x, y: SHOWROOM_CAM.y, z: SHOWROOM_CAM.z,
-      duration: 1.5,
-      ease: 'power2.inOut',
-    });
-
-    timeline.to(controls.target, {
-      x: SHOWROOM_TARGET.x, y: SHOWROOM_TARGET.y, z: SHOWROOM_TARGET.z,
-      duration: 1.5,
-      ease: 'power2.inOut',
-    }, '-=1.5');
-
-    timeline.to(prevCarModel.rotation, {
-      y: prevOriginalRotation,
-      duration: 1.5,
-      ease: 'power2.inOut',
-    }, 0);
-
-    return;
-  }
-
-  // Rotate next car to face forward, then recompute bounds and enter cockpit
-  const nextCarModel = carDataArray[currentCarIndex].model;
-
-  const timeline = gsap.timeline();
-
-  // Phase 1: rotate both cars + move camera out slightly
-  timeline.to(prevCarModel.rotation, {
-    y: prevOriginalRotation,
-    duration: 1.0,
-    ease: 'power2.inOut',
-    onComplete: () => recomputeBounds(currentCarIndex - 1),
-  }, 0);
-
-  timeline.to(nextCarModel.rotation, {
-    y: 0,
-    duration: 1.0,
-    ease: 'power2.inOut',
+  const timeline = gsap.timeline({
     onComplete: () => {
       recomputeBounds(currentCarIndex);
-      setCockpitPosition(currentCarIndex);
-
-      const mc = carDataArray[currentCarIndex].modelCenter;
-      if (cockpitLight) cockpitLight.position.set(mc.x, mc.y + 0.5, mc.z + 0.3);
-      if (cockpitFill) cockpitFill.position.set(mc.x, mc.y + 0.3, mc.z - 0.2);
-      if (dashLight) dashLight.position.set(mc.x, mc.y + 0.1, mc.z + 0.5);
-    },
-  }, 0);
-
-  // Phase 2: Slide into next car's cockpit
-  timeline.to(camera.position, {
-    x: () => cockpitBasePosition.x,
-    y: () => cockpitBasePosition.y,
-    z: () => cockpitBasePosition.z,
-    duration: 1.5,
-    ease: 'power3.inOut',
-    onComplete: () => {
-      state = 'COCKPIT';
-      scrollCooldown = false;
-      setCockpitEnabled(true);
-
-      document.getElementById('cockpit-hud').classList.add('visible');
-
-      populateOverlays();
-      showOverlay();
-
-      if (cockpitLight) gsap.to(cockpitLight, { intensity: 5.0, duration: 0.5 });
-      if (cockpitFill) gsap.to(cockpitFill, { intensity: 3.0, duration: 0.5 });
-      if (dashLight) gsap.to(dashLight, { intensity: 2.0, duration: 0.5 });
+      state = 'EXTERIOR';
+      controls.enabled = true;
+      // Now enter the next car
+      currentCarIndex = nextIndex;
+      enterCar();
     },
   });
 
-  timeline.to(controls.target, {
-    x: () => cockpitLookTarget.x,
-    y: () => cockpitLookTarget.y,
-    z: () => cockpitLookTarget.z,
+  timeline.to(camera.position, {
+    x: SHOWROOM_CAM.x, y: SHOWROOM_CAM.y, z: SHOWROOM_CAM.z,
     duration: 1.5,
-    ease: 'power3.inOut',
+    ease: 'power2.inOut',
+  });
+
+  timeline.to(controls.target, {
+    x: carCenter.x, y: carCenter.y, z: carCenter.z,
+    duration: 1.5,
+    ease: 'power2.inOut',
   }, '-=1.5');
+
+  timeline.to(carModel.rotation, {
+    y: originalRotation,
+    duration: 1.5,
+    ease: 'power2.inOut',
+  }, 0);
+}
+
+function transitionToNextCar() {
+  if (state !== 'COCKPIT') return;
+  const nextIndex = currentCarIndex + 1;
+  if (nextIndex >= CARS.length) {
+    exitCar();
+    return;
+  }
+  exitCarThenEnter(nextIndex);
 }
 
 function transitionToPrevCar() {
   if (state !== 'COCKPIT') return;
-  state = 'TRANSITIONING';
-  scrollCooldown = true;
-
-  // Hide current cockpit overlays
-  document.getElementById('cockpit-hud').classList.remove('visible');
-  hideOverlays();
-  setCockpitEnabled(false);
-
-  const iframe = document.querySelector('#dash-video iframe');
-  if (iframe) iframe.src = '';
-
-  // Dim cockpit lights
-  const cockpitLight = scene.getObjectByName('cockpit_light');
-  const cockpitFill = scene.getObjectByName('cockpit_fill');
-  const dashLight = scene.getObjectByName('dash_light');
-  if (cockpitLight) gsap.to(cockpitLight, { intensity: 0, duration: 0.5 });
-  if (cockpitFill) gsap.to(cockpitFill, { intensity: 0, duration: 0.5 });
-  if (dashLight) gsap.to(dashLight, { intensity: 0, duration: 0.5 });
-
-  // Rotate current car back to showroom angle
-  const prevCarModel = carDataArray[currentCarIndex].model;
-  const prevOriginalRotation = CARS[currentCarIndex].rotation;
-
-  currentCarIndex--;
-
-  // Before first car, return to showroom
-  if (currentCarIndex < 0) {
-    currentCarIndex = 0;
-    const timeline = gsap.timeline({
-      onComplete: () => {
-        recomputeBounds(currentCarIndex);
-        state = 'EXTERIOR';
-        scrollCooldown = false;
-        controls.enabled = true;
-        document.getElementById('hero-overlay').classList.remove('hidden');
-      },
-    });
-
-    timeline.to(camera.position, {
-      x: SHOWROOM_CAM.x, y: SHOWROOM_CAM.y, z: SHOWROOM_CAM.z,
-      duration: 1.5,
-      ease: 'power2.inOut',
-    });
-
-    timeline.to(controls.target, {
-      x: SHOWROOM_TARGET.x, y: SHOWROOM_TARGET.y, z: SHOWROOM_TARGET.z,
-      duration: 1.5,
-      ease: 'power2.inOut',
-    }, '-=1.5');
-
-    // prevCarModel is car 0 in this case — rotate it back
-    timeline.to(prevCarModel.rotation, {
-      y: prevOriginalRotation,
-      duration: 1.5,
-      ease: 'power2.inOut',
-    }, 0);
-
+  const prevIndex = currentCarIndex - 1;
+  if (prevIndex < 0) {
+    exitCar();
     return;
   }
-
-  // Rotate previous (target) car to face forward, then enter its cockpit
-  const nextCarModel = carDataArray[currentCarIndex].model;
-
-  const timeline = gsap.timeline();
-
-  // Phase 1: rotate both cars
-  timeline.to(prevCarModel.rotation, {
-    y: prevOriginalRotation,
-    duration: 1.0,
-    ease: 'power2.inOut',
-    onComplete: () => recomputeBounds(currentCarIndex + 1),
-  }, 0);
-
-  timeline.to(nextCarModel.rotation, {
-    y: 0,
-    duration: 1.0,
-    ease: 'power2.inOut',
-    onComplete: () => {
-      recomputeBounds(currentCarIndex);
-      setCockpitPosition(currentCarIndex);
-
-      const mc = carDataArray[currentCarIndex].modelCenter;
-      if (cockpitLight) cockpitLight.position.set(mc.x, mc.y + 0.5, mc.z + 0.3);
-      if (cockpitFill) cockpitFill.position.set(mc.x, mc.y + 0.3, mc.z - 0.2);
-      if (dashLight) dashLight.position.set(mc.x, mc.y + 0.1, mc.z + 0.5);
-    },
-  }, 0);
-
-  // Phase 2: Slide into previous car's cockpit
-  timeline.to(camera.position, {
-    x: () => cockpitBasePosition.x,
-    y: () => cockpitBasePosition.y,
-    z: () => cockpitBasePosition.z,
-    duration: 1.5,
-    ease: 'power3.inOut',
-    onComplete: () => {
-      state = 'COCKPIT';
-      scrollCooldown = false;
-      setCockpitEnabled(true);
-
-      document.getElementById('cockpit-hud').classList.add('visible');
-
-      populateOverlays();
-      showOverlay();
-
-      if (cockpitLight) gsap.to(cockpitLight, { intensity: 5.0, duration: 0.5 });
-      if (cockpitFill) gsap.to(cockpitFill, { intensity: 3.0, duration: 0.5 });
-      if (dashLight) gsap.to(dashLight, { intensity: 2.0, duration: 0.5 });
-    },
-  });
-
-  timeline.to(controls.target, {
-    x: () => cockpitLookTarget.x,
-    y: () => cockpitLookTarget.y,
-    z: () => cockpitLookTarget.z,
-    duration: 1.5,
-    ease: 'power3.inOut',
-  }, '-=1.5');
+  exitCarThenEnter(prevIndex);
 }
 
 // ============================================
@@ -821,6 +667,10 @@ function animate() {
 
   if (state === 'COCKPIT') {
     camera.lookAt(cockpitLookTarget);
+  }
+
+  if (state === 'TRANSITIONING') {
+    camera.lookAt(controls.target);
   }
 
   renderer.render(scene, camera);
