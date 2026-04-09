@@ -409,8 +409,8 @@ a:hover {
    ============================================ */
 #dash-video {
   position: fixed;
-  left: 51%;
-  top: 84%;
+  left: 52%;
+  top: 90%;
   transform: translate(-50%, -50%);
   z-index: 12;
   width: 240px;
