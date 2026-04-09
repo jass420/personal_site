@@ -60,7 +60,7 @@ const CARS = [
     video: null,
     position: { x: 4, y: 0, z: -1.5 },
     rotation: -0.5,
-    cockpit: { posX: -0.05, posY: 0.25, posZ: -0.06, lookY: 0.10, lookZ: 0.4 },
+    cockpit: { posX: -0.01, posY: 0.35, posZ: -0.18, lookY: 0.10, lookZ: 0.4 },
   },
   {
     model: '2010_lamborghini_murcielago_lp670-4_superveloce/scene.gltf',
@@ -428,17 +428,19 @@ function populateOverlays() {
   }
 
   if (car.projects) {
-    // Multi-project: build stacked HTML
-    let html = '';
-    car.projects.forEach((p, i) => {
-      if (i > 0) html += '<hr class="ws-divider">';
+    // Multi-project: side-by-side cards
+    let html = '<div class="ws-projects-row">';
+    car.projects.forEach((p) => {
+      html += `<div class="ws-project-card">`;
       html += `<h2 class="ws-title">${p.name}</h2>`;
       html += `<p class="ws-subtitle">${p.subtitle}</p>`;
       if (p.award) html += `<p class="ws-award">${p.award}</p>`;
       html += `<p class="ws-desc">${p.desc}</p>`;
       html += `<div class="ws-tags">${p.tags.map(t => `<span class="ws-tag">${t}</span>`).join('')}</div>`;
       if (p.github) html += `<a href="${p.github}" target="_blank" rel="noopener" class="ws-github">View on GitHub &rarr;</a>`;
+      html += `</div>`;
     });
+    html += '</div>';
     wsInfo.innerHTML = html;
   } else {
     // Single project: restore original structure and populate
