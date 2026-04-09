@@ -112,7 +112,7 @@ const CARS = [
     ],
     video: null,
     videoPos: { left: '52%', top: '90%' },
-    position: { x: 3, y: 0, z: -4 },
+    position: { x: 4, y: 0, z: -6 },
     rotation: 0.3,
     cockpit: { posX: -0.01, posY: 0.35, posZ: -0.18, lookY: 0.10, lookZ: 0.4 },
 
@@ -139,7 +139,7 @@ const CARS = [
       },
     ],
     video: null,
-    position: { x: -3, y: 0, z: -4 },
+    position: { x: -4, y: 0, z: -6 },
     rotation: 0.4,
   },
 ];

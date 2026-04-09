@@ -199,13 +199,13 @@ a:hover {
 
 .section-header--projects {
   left: 50%;
-  top: 52%;
+  top: 62%;
   transform: translateX(-50%);
 }
 
 .section-header--work {
   left: 50%;
-  top: 28%;
+  top: 38%;
   transform: translateX(-50%);
 }
 
