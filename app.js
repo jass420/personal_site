@@ -11,6 +11,7 @@ import { initCockpitInteraction, setCockpitEnabled } from './cockpit.js';
 const CARS = [
   {
     model: 'lego_man/scene.gltf',
+    category: 'skills',
     name: 'Skills & Expertise',
     subtitle: 'What I Work With',
     award: '',
@@ -18,13 +19,14 @@ const CARS = [
     tags: ['Python', 'LangGraph', 'RAG', 'AWS', 'Next.js', 'Three.js', 'Flask', 'Docker', 'XGBoost', 'Deep Learning'],
     github: null,
     video: null,
-    position: { x: 0, y: 0, z: 2 },
+    position: { x: 0, y: 0, z: 3 },
     rotation: 0.0,
     scale: 0.8,
     cockpit: { posX: 0, posY: 0.3, posZ: 4.0, lookY: 0.2, lookZ: 0 },
   },
   {
     model: '2016_pagani_huayra_bc/scene.gltf',
+    category: 'project',
     name: 'Roomie',
     subtitle: 'AI Interior Designer',
     award: 'Sophiie Hackathon 2026 \u00b7 5th / 15',
@@ -33,12 +35,13 @@ const CARS = [
     github: 'https://github.com/JasMatharu/roomie',
     video: 'https://www.youtube.com/embed/0mxCZzDBado',
     videoPos: { left: '51%', top: '84%' },
-    position: { x: 0, y: 0, z: -1 },
+    position: { x: -4, y: 0, z: 0 },
     rotation: -0.3,
     cockpit: { posX: -0.005, posY: 0.20, posZ: 0, lookY: 0.15, lookZ: 0.4 },
   },
   {
     model: '2020_aston_martin_vantage_59_amr.glb',
+    category: 'project',
     projects: [
       {
         name: 'Auto Exam Scheduler',
@@ -58,12 +61,13 @@ const CARS = [
       },
     ],
     video: null,
-    position: { x: 4, y: 0, z: -1.5 },
+    position: { x: 4, y: 0, z: 0 },
     rotation: -0.5,
     cockpit: { posX: -0.01, posY: 0.35, posZ: -0.18, lookY: 0.10, lookZ: 0.4 },
   },
   {
     model: '2010_lamborghini_murcielago_lp670-4_superveloce/scene.gltf',
+    category: 'project',
     name: 'Valorant Match Predictor',
     subtitle: 'Esports ML Prediction',
     award: 'UQCS Hackathon 2024 \u00b7 People\'s Choice Award',
@@ -72,13 +76,14 @@ const CARS = [
     github: 'https://github.com/jass420',
     video: 'https://www.youtube.com/embed/p7RATnINbfk',
     videoPos: { left: '52%', top: '90%' },
-    position: { x: -7, y: 0, z: -4 },
+    position: { x: -8, y: 0, z: -1 },
     rotation: 0.5,
     cockpit: { posX: -0.05, posY: 0.25, posZ: -0.06, lookY: 0.10, lookZ: 0.4 },
 
   },
   {
     model: '2006__ford_gt_lm_spec_ll_test_car/scene.gltf',
+    category: 'work',
     projects: [
       {
         name: 'Gradianza AI',
@@ -99,12 +104,13 @@ const CARS = [
     ],
     video: null,
     videoPos: { left: '52%', top: '90%' },
-    position: { x: 7, y: 0, z: -3.5 },
+    position: { x: -4, y: 0, z: -5 },
     rotation: 2.5,
     cockpit: { posX: 0.09, posY: 0.2, posZ: 0.01, lookY: 0.10, lookZ: -0.4 },
   },
   {
     model: '2012_aston_martin_vantage_gte/scene.gltf',
+    category: 'work',
     projects: [
       {
         name: 'Heuris Tech',
@@ -133,13 +139,14 @@ const CARS = [
     ],
     video: null,
     videoPos: { left: '52%', top: '90%' },
-    position: { x: 0, y: 0, z: -6 },
+    position: { x: 4, y: 0, z: -5 },
     rotation: 0.3,
     cockpit: { posX: -0.01, posY: 0.35, posZ: -0.18, lookY: 0.10, lookZ: 0.4 },
 
   },
   {
     model: '1991_rwb_porsche_911_964/scene.gltf',
+    category: 'project',
     name: 'Coming Soon',
     subtitle: 'Project TBD',
     award: '',
@@ -147,8 +154,8 @@ const CARS = [
     tags: [],
     github: null,
     video: null,
-    position: { x: -4, y: 0, z: -2 },
-    rotation: 0.4,
+    position: { x: 8, y: 0, z: -1 },
+    rotation: -0.4,
   },
 ];
 
@@ -367,6 +374,7 @@ function onModelLoaded() {
       document.getElementById('loading-screen').style.display = 'none';
     }, 800);
     document.getElementById('hero-overlay').classList.remove('hidden');
+    createCarLabels();
     state = 'EXTERIOR';
   }, 600);
 }
@@ -535,6 +543,7 @@ function enterCar() {
   scrollCooldown = true;
 
   document.getElementById('hero-overlay').classList.add('hidden');
+  document.getElementById('car-labels').classList.add('hidden');
 
   controls.enabled = false;
 
@@ -640,6 +649,7 @@ function exitCar() {
       scrollCooldown = false;
       controls.enabled = true;
       document.getElementById('hero-overlay').classList.remove('hidden');
+      document.getElementById('car-labels').classList.remove('hidden');
     },
   });
 
@@ -739,6 +749,106 @@ function transitionToPrevCar() {
 }
 
 // ============================================
+// FLOATING CAR LABELS
+// ============================================
+
+// Section header world positions (computed after models load)
+const sectionHeaders = [
+  { id: 'header-projects', label: 'Projects', category: 'project' },
+  { id: 'header-work', label: 'Work Experience', category: 'work' },
+];
+
+function createCarLabels() {
+  const container = document.getElementById('car-labels');
+
+  // Create section headers
+  sectionHeaders.forEach(h => {
+    const header = document.createElement('div');
+    header.className = 'section-header';
+    header.id = h.id;
+    header.textContent = h.label;
+    container.appendChild(header);
+  });
+
+  // Create car labels
+  CARS.forEach((car, i) => {
+    const card = document.createElement('div');
+    card.className = 'car-label';
+    card.dataset.index = i;
+
+    if (car.projects) {
+      card.innerHTML = car.projects.map(p =>
+        `<span class="cl-name">${p.name}</span>`
+      ).join('<span class="cl-divider">&middot;</span>');
+    } else {
+      card.innerHTML = `<span class="cl-name">${car.name}</span>`;
+      if (car.subtitle) card.innerHTML += `<br><span class="cl-sub">${car.subtitle}</span>`;
+    }
+
+    card.addEventListener('click', () => {
+      if (state !== 'EXTERIOR') return;
+      currentCarIndex = i;
+      enterCar();
+    });
+
+    container.appendChild(card);
+  });
+}
+
+function updateCarLabels() {
+  // Update section headers
+  sectionHeaders.forEach(h => {
+    const el = document.getElementById(h.id);
+    if (!el) return;
+
+    // Compute average position of cars in this category
+    let sumX = 0, sumY = 0, sumZ = 0, count = 0;
+    CARS.forEach((car, i) => {
+      if (car.category === h.category && carDataArray[i]) {
+        const mc = carDataArray[i].modelCenter;
+        const ms = carDataArray[i].modelSize;
+        sumX += mc.x;
+        sumY += mc.y + ms.y * 0.9;
+        sumZ += mc.z;
+        count++;
+      }
+    });
+    if (count === 0) { el.style.display = 'none'; return; }
+
+    const pos = new THREE.Vector3(sumX / count, sumY / count, sumZ / count);
+    pos.project(camera);
+
+    const x = (pos.x * 0.5 + 0.5) * window.innerWidth;
+    const y = (-pos.y * 0.5 + 0.5) * window.innerHeight;
+
+    if (pos.z > 1) { el.style.display = 'none'; return; }
+
+    el.style.display = '';
+    el.style.transform = `translate(-50%, -100%) translate(${x}px, ${y}px)`;
+  });
+
+  // Update car labels
+  const labels = document.querySelectorAll('.car-label');
+  labels.forEach((label, i) => {
+    const data = carDataArray[i];
+    if (!data) { label.style.display = 'none'; return; }
+
+    const pos = data.modelCenter.clone();
+    pos.y += data.modelSize.y * 0.6;
+
+    pos.project(camera);
+
+    const x = (pos.x * 0.5 + 0.5) * window.innerWidth;
+    const y = (-pos.y * 0.5 + 0.5) * window.innerHeight;
+
+    if (pos.z > 1) { label.style.display = 'none'; return; }
+
+    label.style.display = '';
+    label.style.transform = `translate(-50%, -100%) translate(${x}px, ${y}px)`;
+  });
+}
+
+// ============================================
 // RENDER LOOP
 // ============================================
 
@@ -747,6 +857,7 @@ function animate() {
 
   if (state === 'EXTERIOR' && controls.enabled) {
     controls.update();
+    updateCarLabels();
   }
 
   if (state === 'COCKPIT') {
