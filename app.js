@@ -38,7 +38,7 @@ const CARS = [
     cockpit: { posX: -0.005, posY: 0.20, posZ: 0, lookY: 0.15, lookZ: 0.4 },
   },
   {
-    model: '1991_rwb_porsche_911_964/scene.gltf',
+    model: '2020_aston_martin_vantage_59_amr.glb',
     projects: [
       {
         name: 'Auto Exam Scheduler',
@@ -60,6 +60,7 @@ const CARS = [
     video: null,
     position: { x: 4, y: 0, z: -1.5 },
     rotation: -0.5,
+    cockpit: { posX: -0.05, posY: 0.25, posZ: -0.06, lookY: 0.10, lookZ: 0.4 },
   },
   {
     model: '2010_lamborghini_murcielago_lp670-4_superveloce/scene.gltf',
@@ -136,7 +137,7 @@ const CARS = [
     rotation: 0.3,
   },
   {
-    model: '2020_aston_martin_vantage_59_amr.glb',
+    model: '1991_rwb_porsche_911_964/scene.gltf',
     name: 'Coming Soon',
     subtitle: 'Project TBD',
     award: '',
@@ -144,11 +145,8 @@ const CARS = [
     tags: [],
     github: null,
     video: null,
-    videoPos: { left: '52%', top: '90%' },
     position: { x: -4, y: 0, z: -2 },
     rotation: 0.4,
-    cockpit: { posX: -0.05, posY: 0.25, posZ: -0.06, lookY: 0.10, lookZ: 0.4 },
-
   },
 ];
 
