@@ -32,6 +32,7 @@ const CARS = [
     tags: ['LangGraph', 'GPT-4 Vision', 'AI Agents', 'Python'],
     github: 'https://github.com/JasMatharu/roomie',
     video: 'https://www.youtube.com/embed/0mxCZzDBado',
+    videoPos: { left: '51%', top: '84%' },
     position: { x: 0, y: 0, z: -1 },
     rotation: -0.3,
     cockpit: { posX: -0.005, posY: 0.20, posZ: 0, lookY: 0.15, lookZ: 0.4 },
@@ -57,8 +58,8 @@ const CARS = [
       },
     ],
     video: null,
-    position: { x: -4, y: 0, z: -2 },
-    rotation: 0.4,
+    position: { x: 4, y: 0, z: -1.5 },
+    rotation: -0.5,
   },
   {
     model: '2010_lamborghini_murcielago_lp670-4_superveloce/scene.gltf',
@@ -69,6 +70,7 @@ const CARS = [
     tags: ['Python', 'XGBoost', 'ML'],
     github: 'https://github.com/jass420',
     video: 'https://www.youtube.com/embed/p7RATnINbfk',
+    videoPos: { left: '52%', top: '90%' },
     position: { x: -7, y: 0, z: -4 },
     rotation: 0.5,
     cockpit: { posX: -0.05, posY: 0.25, posZ: -0.06, lookY: 0.10, lookZ: 0.4 },
@@ -95,6 +97,7 @@ const CARS = [
       },
     ],
     video: null,
+    videoPos: { left: '52%', top: '90%' },
     position: { x: 7, y: 0, z: -3.5 },
     rotation: 2.5,
     cockpit: { posX: 0.09, posY: 0.2, posZ: 0.01, lookY: 0.10, lookZ: -0.4 },
@@ -128,6 +131,7 @@ const CARS = [
       },
     ],
     video: null,
+    videoPos: { left: '52%', top: '90%' },
     position: { x: 0, y: 0, z: -6 },
     rotation: 0.3,
   },
@@ -140,8 +144,9 @@ const CARS = [
     tags: [],
     github: null,
     video: null,
-    position: { x: 4, y: 0, z: -1.5 },
-    rotation: -0.5,
+    videoPos: { left: '52%', top: '90%' },
+    position: { x: -4, y: 0, z: -2 },
+    rotation: 0.4,
     cockpit: { posX: -0.05, posY: 0.25, posZ: -0.06, lookY: 0.10, lookZ: 0.4 },
 
   },
@@ -459,6 +464,13 @@ function populateOverlays() {
   const iframe = dashVideo.querySelector('iframe');
   if (car.video) {
     iframe.src = car.video;
+    if (car.videoPos) {
+      dashVideo.style.left = car.videoPos.left;
+      dashVideo.style.top = car.videoPos.top;
+    } else {
+      dashVideo.style.left = '52%';
+      dashVideo.style.top = '90%';
+    }
     dashVideo.classList.add('visible');
   } else {
     iframe.src = '';
