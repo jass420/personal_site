@@ -62,28 +62,28 @@ const CARS = [
     cockpit: { posX: -0.005, posY: 0.15, posZ: -0.1, lookY: 0.10, lookZ: 0.4 },
   },
   {
-    model: 'bmw_m3_coupe_e30_1986/scene.gltf',
-    name: 'Research Paper Link Explorer',
-    subtitle: 'Research Graph Backend',
-    award: 'Sep \u2013 Nov 2025',
-    desc: 'Developed a research paper graph generation backend using Flask and SQLAlchemy to help academics find complex relationships between papers through filters such as thematic similarity, citations, and co-authors.',
-    tags: ['Flask', 'SQLAlchemy', 'OpenAlex', 'arXiv'],
+    model: '2010__lamborghini_murcielago_lp650-4_roadster/scene.gltf',
+    name: 'The Diet Science',
+    subtitle: 'AI-Powered Nutritionist',
+    award: 'Feb 2026 \u2013 Present',
+    desc: 'Architecting an AI-powered nutritionist using RAG with Pinecone and OpenAI to retrieve personalised nutrition information via a LangGraph agent; currently in trial with 15 users.',
+    tags: ['RAG', 'Pinecone', 'OpenAI', 'LangGraph', 'Python'],
     github: null,
     video: null,
     position: { x: -7, y: 0, z: -4 },
-    rotation: 0.6,
+    rotation: 0.5,
   },
   {
-    model: 'lancia_stratos_hf_-_rally_-_alitalia_livery.glb',
-    name: 'Valorant Match Predictor',
-    subtitle: 'Esports ML Prediction',
-    award: 'UQCS Hackathon 2024 \u00b7 People\'s Choice Award',
-    tags: ['Python', 'XGBoost', 'ML'],
-    desc: 'Built a match outcome predictor for Valorant using a gradient boosting model (Python, XGBoost) achieving 82% accuracy.',
-    github: 'https://github.com/jass420',
+    model: '2006__ford_gt_lm_spec_ll_test_car/scene.gltf',
+    name: 'Gradianza AI',
+    subtitle: 'AI Receptionist Platform',
+    award: 'Nov 2025 \u2013 Present',
+    desc: 'Architecting an AI-powered receptionist handling bookings for hotels and restaurants. Currently deployed and scaled to handle hundreds of calls per day. Built custom agents and a RAG pipeline with full privacy.',
+    tags: ['AI Agents', 'RAG', 'LangGraph', 'Voice AI'],
+    github: null,
     video: null,
     position: { x: 7, y: 0, z: -3.5 },
-    rotation: -0.4,
+    rotation: -0.5,
   },
 ];
 
@@ -99,8 +99,8 @@ let carDataArray = [];
 let scrollCooldown = false;
 
 // Camera targets
-const SHOWROOM_CAM = { x: 0, y: 6, z: 16 };
-const SHOWROOM_TARGET = { x: 0, y: 0, z: -2 };
+const SHOWROOM_CAM = { x: 0, y: 7, z: 18 };
+const SHOWROOM_TARGET = { x: 0, y: 0, z: -3 };
 
 let cockpitBasePosition = new THREE.Vector3();
 let cockpitLookTarget = new THREE.Vector3();
@@ -151,7 +151,7 @@ async function init() {
   controls.autoRotate = false;
   controls.maxPolarAngle = Math.PI / 2.1;
   controls.minPolarAngle = 0.2;
-  controls.maxDistance = 24;
+  controls.maxDistance = 28;
   controls.minDistance = 8;
   controls.target.set(SHOWROOM_TARGET.x, SHOWROOM_TARGET.y, SHOWROOM_TARGET.z);
   controls.enablePan = false;

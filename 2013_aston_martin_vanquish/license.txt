@@ -1,0 +1,11 @@
+Model Information:
+* title:	2013 Aston Martin Vanquish
+* source:	https://sketchfab.com/3d-models/2013-aston-martin-vanquish-ebf8fff820874917a2d3db417714dbc8
+* author:	OUTPISTON (https://sketchfab.com/outpiston)
+
+Model License:
+* license type:	CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
+* requirements:	Author must be credited. No commercial use. Modified versions must have the same license.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "2013 Aston Martin Vanquish" (https://sketchfab.com/3d-models/2013-aston-martin-vanquish-ebf8fff820874917a2d3db417714dbc8) by OUTPISTON (https://sketchfab.com/outpiston) licensed under CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)

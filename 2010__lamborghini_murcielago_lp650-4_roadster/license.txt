@@ -1,0 +1,11 @@
+Model Information:
+* title:	2010  Lamborghini Murcielago LP650-4 Roadster
+* source:	https://sketchfab.com/3d-models/2010-lamborghini-murcielago-lp650-4-roadster-e29860a9359647d6990619e16d024ae0
+* author:	Ddiaz Design (https://sketchfab.com/ddiaz-design)
+
+Model License:
+* license type:	CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
+* requirements:	Author must be credited. No commercial use. Modified versions must have the same license.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "2010  Lamborghini Murcielago LP650-4 Roadster" (https://sketchfab.com/3d-models/2010-lamborghini-murcielago-lp650-4-roadster-e29860a9359647d6990619e16d024ae0) by Ddiaz Design (https://sketchfab.com/ddiaz-design) licensed under CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
