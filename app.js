@@ -135,6 +135,8 @@ const CARS = [
     videoPos: { left: '52%', top: '90%' },
     position: { x: 0, y: 0, z: -6 },
     rotation: 0.3,
+    cockpit: { posX: -0.01, posY: 0.35, posZ: -0.18, lookY: 0.10, lookZ: 0.4 },
+
   },
   {
     model: '1991_rwb_porsche_911_964/scene.gltf',
@@ -558,9 +560,9 @@ function enterCar() {
       populateOverlays();
       showOverlay();
 
-      if (cockpitLight) gsap.to(cockpitLight, { intensity: 5.0, duration: 0.5 });
-      if (cockpitFill) gsap.to(cockpitFill, { intensity: 3.0, duration: 0.5 });
-      if (dashLight) gsap.to(dashLight, { intensity: 2.0, duration: 0.5 });
+      if (cockpitLight) gsap.to(cockpitLight, { intensity: 5.0, duration: 0.3 });
+      if (cockpitFill) gsap.to(cockpitFill, { intensity: 3.0, duration: 0.3 });
+      if (dashLight) gsap.to(dashLight, { intensity: 2.0, duration: 0.3 });
     },
   });
 
@@ -569,14 +571,14 @@ function enterCar() {
     x: modelCenter.x - modelSize.x * 0.6,
     y: modelCenter.y + modelSize.y * 0.3,
     z: modelCenter.z + modelSize.z * 0.1,
-    duration: 1.0,
-    ease: 'power2.inOut',
+    duration: 0.6,
+    ease: 'power2.out',
   });
 
   timeline.to(carModel.rotation, {
     y: 0,
-    duration: 1.0,
-    ease: 'power2.inOut',
+    duration: 0.6,
+    ease: 'power2.out',
     onComplete: () => {
       // Recompute bounds now that car faces forward
       recomputeBounds(currentCarIndex);
@@ -594,7 +596,7 @@ function enterCar() {
     x: () => cockpitBasePosition.x,
     y: () => cockpitBasePosition.y,
     z: () => cockpitBasePosition.z,
-    duration: 1.2,
+    duration: 0.7,
     ease: 'power3.inOut',
   });
 
@@ -602,9 +604,9 @@ function enterCar() {
     x: () => cockpitLookTarget.x,
     y: () => cockpitLookTarget.y,
     z: () => cockpitLookTarget.z,
-    duration: 1.2,
+    duration: 0.7,
     ease: 'power3.inOut',
-  }, '-=1.2');
+  }, '-=0.7');
 }
 
 function exitCar() {
@@ -624,9 +626,9 @@ function exitCar() {
   const cockpitLight = scene.getObjectByName('cockpit_light');
   const cockpitFill = scene.getObjectByName('cockpit_fill');
   const dashLight = scene.getObjectByName('dash_light');
-  if (cockpitLight) gsap.to(cockpitLight, { intensity: 0, duration: 0.5 });
-  if (cockpitFill) gsap.to(cockpitFill, { intensity: 0, duration: 0.5 });
-  if (dashLight) gsap.to(dashLight, { intensity: 0, duration: 0.5 });
+  if (cockpitLight) gsap.to(cockpitLight, { intensity: 0, duration: 0.3 });
+  if (cockpitFill) gsap.to(cockpitFill, { intensity: 0, duration: 0.3 });
+  if (dashLight) gsap.to(dashLight, { intensity: 0, duration: 0.3 });
 
   const carModel = carDataArray[currentCarIndex].model;
   const originalRotation = CARS[currentCarIndex].rotation;
@@ -643,21 +645,21 @@ function exitCar() {
 
   timeline.to(camera.position, {
     x: SHOWROOM_CAM.x, y: SHOWROOM_CAM.y, z: SHOWROOM_CAM.z,
-    duration: 1.5,
-    ease: 'power2.inOut',
+    duration: 0.8,
+    ease: 'power3.out',
   });
 
   timeline.to(controls.target, {
     x: SHOWROOM_TARGET.x, y: SHOWROOM_TARGET.y, z: SHOWROOM_TARGET.z,
-    duration: 1.5,
-    ease: 'power2.inOut',
-  }, '-=1.5');
+    duration: 0.8,
+    ease: 'power3.out',
+  }, '-=0.8');
 
   // Rotate car back to showroom angle
   timeline.to(carModel.rotation, {
     y: originalRotation,
-    duration: 1.5,
-    ease: 'power2.inOut',
+    duration: 0.8,
+    ease: 'power3.out',
   }, 0);
 }
 
@@ -678,9 +680,9 @@ function exitCarThenEnter(nextIndex) {
   const cockpitLight = scene.getObjectByName('cockpit_light');
   const cockpitFill = scene.getObjectByName('cockpit_fill');
   const dashLight = scene.getObjectByName('dash_light');
-  if (cockpitLight) gsap.to(cockpitLight, { intensity: 0, duration: 0.5 });
-  if (cockpitFill) gsap.to(cockpitFill, { intensity: 0, duration: 0.5 });
-  if (dashLight) gsap.to(dashLight, { intensity: 0, duration: 0.5 });
+  if (cockpitLight) gsap.to(cockpitLight, { intensity: 0, duration: 0.3 });
+  if (cockpitFill) gsap.to(cockpitFill, { intensity: 0, duration: 0.3 });
+  if (dashLight) gsap.to(dashLight, { intensity: 0, duration: 0.3 });
 
   const carModel = carDataArray[currentCarIndex].model;
   const carCenter = carDataArray[currentCarIndex].modelCenter;
@@ -699,20 +701,20 @@ function exitCarThenEnter(nextIndex) {
 
   timeline.to(camera.position, {
     x: SHOWROOM_CAM.x, y: SHOWROOM_CAM.y, z: SHOWROOM_CAM.z,
-    duration: 1.5,
-    ease: 'power2.inOut',
+    duration: 0.7,
+    ease: 'power3.out',
   });
 
   timeline.to(controls.target, {
     x: carCenter.x, y: carCenter.y, z: carCenter.z,
-    duration: 1.5,
-    ease: 'power2.inOut',
-  }, '-=1.5');
+    duration: 0.7,
+    ease: 'power3.out',
+  }, '-=0.7');
 
   timeline.to(carModel.rotation, {
     y: originalRotation,
-    duration: 1.5,
-    ease: 'power2.inOut',
+    duration: 0.7,
+    ease: 'power3.out',
   }, 0);
 }
 
