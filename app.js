@@ -38,28 +38,27 @@ const CARS = [
   },
   {
     model: '1991_rwb_porsche_911_964/scene.gltf',
-    name: 'Auto Exam Scheduler',
-    subtitle: 'University Exam Scheduling',
-    award: 'Mar \u2013 Jun 2025',
-    desc: 'Co-built and load-tested the backend for a university exam scheduling system handling room allocation and invigilator assignments, deployed on AWS with auto-scaling (1\u20134 instances) achieving 99.9% uptime.',
-    tags: ['AWS', 'Auto-scaling', 'Load Testing'],
-    github: 'https://github.com/CSSE6400/2025_P2_Auto_Exam_Scheduling',
+    projects: [
+      {
+        name: 'Auto Exam Scheduler',
+        subtitle: 'University Exam Scheduling',
+        award: 'Mar \u2013 Jun 2025',
+        desc: 'Co-built and load-tested the backend for a university exam scheduling system handling room allocation and invigilator assignments, deployed on AWS with auto-scaling (1\u20134 instances) achieving 99.9% uptime.',
+        tags: ['AWS', 'Auto-scaling', 'Load Testing'],
+        github: 'https://github.com/CSSE6400/2025_P2_Auto_Exam_Scheduling',
+      },
+      {
+        name: 'Detecting Melanoma',
+        subtitle: 'Medical Image Classification',
+        award: 'Sep \u2013 Nov 2025',
+        desc: 'Implemented and fine-tuned a Siamese network to classify the ISIC 2020 Kaggle Challenge dataset and achieved 80% accuracy despite a severe 98:2 class imbalance.',
+        tags: ['Deep Learning', 'Siamese Networks', 'Python'],
+        github: null,
+      },
+    ],
     video: null,
     position: { x: -4, y: 0, z: -2 },
     rotation: 0.4,
-  },
-  {
-    model: '2012_aston_martin_vantage_gte/scene.gltf',
-    name: 'Detecting Melanoma',
-    subtitle: 'Medical Image Classification',
-    award: 'Sep \u2013 Nov 2025',
-    desc: 'Implemented and fine-tuned a Siamese network to classify the ISIC 2020 Kaggle Challenge dataset and achieved 80% accuracy despite a severe 98:2 class imbalance.',
-    tags: ['Deep Learning', 'Siamese Networks', 'Python'],
-    github: null,
-    video: null,
-    position: { x: 4, y: 0, z: -1.5 },
-    rotation: -0.5,
-    cockpit: { posX: -0.005, posY: 0.15, posZ: -0.1, lookY: 0.10, lookZ: 0.4 },
   },
   {
     model: '2010_lamborghini_murcielago_lp670-4_superveloce/scene.gltf',
@@ -77,25 +76,57 @@ const CARS = [
   },
   {
     model: '2006__ford_gt_lm_spec_ll_test_car/scene.gltf',
-    name: 'Gradianza AI',
-    subtitle: 'AI Receptionist Platform',
-    award: 'Nov 2025 \u2013 Present',
-    desc: 'Architecting an AI-powered receptionist handling bookings for hotels and restaurants. Currently deployed and scaled to handle hundreds of calls per day. Built custom agents and a RAG pipeline with full privacy.',
-    tags: ['AI Agents', 'RAG', 'LangGraph', 'Voice AI'],
-    github: null,
+    projects: [
+      {
+        name: 'Gradianza AI',
+        subtitle: 'AI Receptionist Platform',
+        award: 'Nov 2025 \u2013 Present',
+        desc: 'Architecting an AI-powered receptionist handling bookings for hotels and restaurants. Currently deployed and scaled to handle hundreds of calls per day. Built custom agents and a RAG pipeline with full privacy.',
+        tags: ['AI Agents', 'RAG', 'LangGraph', 'Voice AI'],
+        github: null,
+      },
+      {
+        name: 'The Diet Science',
+        subtitle: 'AI-Powered Nutritionist',
+        award: 'Feb 2026 \u2013 Present',
+        desc: 'Architecting an AI-powered nutritionist using RAG with Pinecone and OpenAI to retrieve personalised nutrition information via a LangGraph agent; currently in trial with 15 users.',
+        tags: ['RAG', 'Pinecone', 'OpenAI', 'LangGraph', 'Python'],
+        github: null,
+      },
+    ],
     video: null,
     position: { x: 7, y: 0, z: -3.5 },
     rotation: 2.5,
     cockpit: { posX: 0.09, posY: 0.2, posZ: 0.01, lookY: 0.10, lookZ: -0.4 },
   },
   {
-    model: '2013_aston_martin_vanquish/scene.gltf',
-    name: 'The Diet Science',
-    subtitle: 'AI-Powered Nutritionist',
-    award: 'Feb 2026 \u2013 Present',
-    desc: 'Architecting an AI-powered nutritionist using RAG with Pinecone and OpenAI to retrieve personalised nutrition information via a LangGraph agent; currently in trial with 15 users.',
-    tags: ['RAG', 'Pinecone', 'OpenAI', 'LangGraph', 'Python'],
-    github: null,
+    model: '2012_aston_martin_vantage_gte/scene.gltf',
+    projects: [
+      {
+        name: 'Heuris Tech',
+        subtitle: 'Co-founder & AI Engineer \u00b7 UQ ilab accelerator',
+        award: 'Mar 2025 \u2013 Present',
+        desc: 'Contributed to building a LangGraph-based sales automation agent at useoven.com, reducing manual outreach tasks by 90%.',
+        tags: ['LangGraph', 'Sales AI', 'Automation'],
+        github: null,
+      },
+      {
+        name: 'Webcom',
+        subtitle: 'App Developer',
+        award: 'Dec 2024 \u2013 Feb 2025',
+        desc: 'Developed and deployed an internal Flutter app for real estate listings; improved app performance by 30%.',
+        tags: ['Flutter', 'Dart', 'Mobile'],
+        github: null,
+      },
+      {
+        name: 'Academic Tutor',
+        subtitle: 'University of Queensland',
+        award: 'Feb 2025 \u2013 Jun 2025',
+        desc: 'Facilitated tutorials and practicals for second-year CS students in Theory of Computing (COMP2048).',
+        tags: ['Teaching', 'Theory of Computing'],
+        github: null,
+      },
+    ],
     video: null,
     position: { x: 0, y: 0, z: -6 },
     rotation: 0.3,
@@ -359,8 +390,17 @@ function isLegoMan() {
   return CARS[currentCarIndex].model.includes('lego_man');
 }
 
+const WS_ORIGINAL_HTML = `
+    <h2 class="ws-title"></h2>
+    <p class="ws-subtitle"></p>
+    <p class="ws-award"></p>
+    <p class="ws-desc"></p>
+    <div class="ws-tags"></div>
+    <a href="#" target="_blank" rel="noopener" class="ws-github">View on GitHub &rarr;</a>`;
+
 function populateOverlays() {
   const car = CARS[currentCarIndex];
+  const wsInfo = document.getElementById('windscreen-info');
 
   if (isLegoMan()) {
     // Populate speech bubble
@@ -370,21 +410,35 @@ function populateOverlays() {
     return;
   }
 
-  // Populate windscreen overlay for cars
-  document.querySelector('.ws-title').textContent = car.name;
-  document.querySelector('.ws-subtitle').textContent = car.subtitle;
-  document.querySelector('.ws-award').textContent = car.award;
-  document.querySelector('.ws-desc').textContent = car.desc;
-
-  const tagsContainer = document.querySelector('.ws-tags');
-  tagsContainer.innerHTML = car.tags.map((t) => `<span class="ws-tag">${t}</span>`).join('');
-
-  const githubLink = document.querySelector('.ws-github');
-  if (car.github) {
-    githubLink.href = car.github;
-    githubLink.style.display = '';
+  if (car.projects) {
+    // Multi-project: build stacked HTML
+    let html = '';
+    car.projects.forEach((p, i) => {
+      if (i > 0) html += '<hr class="ws-divider">';
+      html += `<h2 class="ws-title">${p.name}</h2>`;
+      html += `<p class="ws-subtitle">${p.subtitle}</p>`;
+      if (p.award) html += `<p class="ws-award">${p.award}</p>`;
+      html += `<p class="ws-desc">${p.desc}</p>`;
+      html += `<div class="ws-tags">${p.tags.map(t => `<span class="ws-tag">${t}</span>`).join('')}</div>`;
+      if (p.github) html += `<a href="${p.github}" target="_blank" rel="noopener" class="ws-github">View on GitHub &rarr;</a>`;
+    });
+    wsInfo.innerHTML = html;
   } else {
-    githubLink.style.display = 'none';
+    // Single project: restore original structure and populate
+    wsInfo.innerHTML = WS_ORIGINAL_HTML;
+    document.querySelector('.ws-title').textContent = car.name;
+    document.querySelector('.ws-subtitle').textContent = car.subtitle;
+    document.querySelector('.ws-award').textContent = car.award;
+    document.querySelector('.ws-desc').textContent = car.desc;
+    document.querySelector('.ws-tags').innerHTML = car.tags.map((t) => `<span class="ws-tag">${t}</span>`).join('');
+
+    const githubLink = document.querySelector('.ws-github');
+    if (car.github) {
+      githubLink.href = car.github;
+      githubLink.style.display = '';
+    } else {
+      githubLink.style.display = 'none';
+    }
   }
 
   const dashVideo = document.getElementById('dash-video');
