@@ -131,6 +131,20 @@ const CARS = [
     position: { x: 0, y: 0, z: -6 },
     rotation: 0.3,
   },
+  {
+    model: '2020_aston_martin_vantage_59_amr.glb',
+    name: 'Coming Soon',
+    subtitle: 'Project TBD',
+    award: '',
+    desc: 'A new project will be showcased here soon.',
+    tags: [],
+    github: null,
+    video: null,
+    position: { x: 4, y: 0, z: -1.5 },
+    rotation: -0.5,
+    cockpit: { posX: -0.05, posY: 0.25, posZ: -0.06, lookY: 0.10, lookZ: 0.4 },
+
+  },
 ];
 
 let currentCarIndex = 0;
