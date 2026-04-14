@@ -206,3 +206,101 @@
   font-weight: 500;
   color: #7c3aed;
 }
+
+/* ============================================
+   READER PAGE: MOBILE (small phones)
+   ============================================ */
+@media (max-width: 480px) {
+  /* Hero */
+  .reader-hero {
+    padding: 2.5rem 1rem 2rem;
+  }
+
+  .reader-hero .hero-subtitle {
+    max-width: none;
+  }
+
+  /* Sections */
+  .reader-section {
+    padding: 1.75rem 1rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .section-intro {
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Cards */
+  .card {
+    padding: 1rem;
+  }
+
+  .card-header h3 {
+    font-size: 0.9rem;
+  }
+
+  .card p {
+    font-size: 0.8rem;
+  }
+
+  /* Timeline */
+  .timeline-item {
+    padding: 1rem;
+  }
+
+  .timeline-header {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .timeline-header h3 {
+    font-size: 0.9rem;
+  }
+
+  .timeline-item li {
+    font-size: 0.8rem;
+  }
+
+  /* Skills */
+  .skill-tag {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.7rem;
+  }
+
+  /* CTA buttons — full width */
+  .reader-cta-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .reader-cta {
+    justify-content: center;
+    min-height: 48px;
+    font-size: 0.9rem;
+  }
+
+  /* Card/project links — bigger tap target */
+  .card-link {
+    display: inline-block;
+    padding: 0.4rem 0;
+    font-size: 0.8rem;
+  }
+
+  /* Education */
+  .education-item {
+    padding: 1rem;
+  }
+
+  .education-item h3 {
+    font-size: 0.9rem;
+  }
+
+  /* Footer */
+  .footer-links {
+    gap: 1rem;
+  }
+}
