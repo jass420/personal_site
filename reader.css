@@ -1,0 +1,208 @@
+/* ============================================
+   READER PAGE: HERO
+   ============================================ */
+.reader-hero {
+  text-align: center;
+  padding: 4rem 1.5rem 3rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.reader-hero .hero-title {
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-weight: 700;
+  color: #1a1a2e;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin-bottom: 1rem;
+}
+
+.reader-hero .hero-title .gradient-text {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9, #5b21b6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.reader-hero .hero-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #7c3aed;
+  margin-bottom: 1.25rem;
+}
+
+.reader-hero .hero-subtitle {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #5a5a6e;
+  max-width: 500px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.7;
+}
+
+/* ============================================
+   READER PAGE: SECTIONS
+   ============================================ */
+.reader-section {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+}
+
+.reader-section + .reader-section {
+  border-top: 1px solid rgba(124, 58, 237, 0.06);
+}
+
+/* ============================================
+   READER PAGE: SKILLS GRID
+   ============================================ */
+.skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.skill-tag {
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(124, 58, 237, 0.08);
+  color: #7c3aed;
+  border: 1px solid rgba(124, 58, 237, 0.15);
+}
+
+/* ============================================
+   READER PAGE: VERSION TOGGLE
+   ============================================ */
+.version-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.06);
+  border: 1px solid rgba(124, 58, 237, 0.15);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.version-toggle:hover {
+  background: rgba(124, 58, 237, 0.12);
+  border-color: rgba(124, 58, 237, 0.3);
+}
+
+/* ============================================
+   READER PAGE: CTA BUTTONS
+   ============================================ */
+.reader-cta-row {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.reader-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.reader-cta--primary {
+  background: #7c3aed;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.25);
+}
+
+.reader-cta--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(124, 58, 237, 0.35);
+  color: #fff;
+}
+
+.reader-cta--secondary {
+  background: rgba(124, 58, 237, 0.06);
+  color: #7c3aed;
+  border: 1px solid rgba(124, 58, 237, 0.15);
+}
+
+.reader-cta--secondary:hover {
+  background: rgba(124, 58, 237, 0.12);
+  border-color: rgba(124, 58, 237, 0.3);
+}
+
+/* ============================================
+   READER PAGE: VIDEO GRID
+   ============================================ */
+.reader-video-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 520px) {
+  .reader-video-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.reader-video-card {
+  background: #ffffff;
+  border: 1px solid rgba(124, 58, 237, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.reader-video-card .video-embed {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+}
+
+.reader-video-card .video-embed iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.reader-video-card .video-info {
+  padding: 0.75rem 1rem;
+}
+
+.reader-video-card .video-info h3 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+/* ============================================
+   READER PAGE: SECTION LINKS
+   ============================================ */
+.reader-more {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.reader-more a {
+  font-weight: 500;
+  color: #7c3aed;
+}

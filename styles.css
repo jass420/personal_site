@@ -15,8 +15,11 @@ body {
   font-family: 'Inter', sans-serif;
   color: #2a2a3e;
   background: #f5f5fa;
-  overflow: hidden;
   line-height: 1.6;
+}
+
+body.showroom {
+  overflow: hidden;
 }
 
 a {
@@ -1111,8 +1114,175 @@ a:hover {
 }
 
 /* ============================================
+   NAVIGATION
+   ============================================ */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: rgba(245, 245, 250, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(124, 58, 237, 0.08);
+}
+
+.nav-logo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #5a5a6e;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: #7c3aed;
+}
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: #1a1a2e;
+  border-radius: 1px;
+  transition: transform 0.2s;
+}
+
+/* ============================================
+   CONTENT WRAPPER (subpages)
+   ============================================ */
+.content {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+/* ============================================
+   PAGE HEADER (subpages)
+   ============================================ */
+.section-label {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #7c3aed;
+  margin-bottom: 0.5rem;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.section-intro {
+  font-size: 0.95rem;
+  color: #6a6a7e;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+footer {
+  margin-top: 4rem;
+  padding: 2rem 0;
+  border-top: 1px solid rgba(124, 58, 237, 0.08);
+  text-align: center;
+}
+
+.footer-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.footer-links a {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #6a6a7e;
+}
+
+.footer-copy {
+  font-size: 0.75rem;
+  color: #9a9aaa;
+}
+
+/* ============================================
+   EDUCATION LIST
+   ============================================ */
+.education-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ============================================
    RESPONSIVE
    ============================================ */
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: flex;
+  }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: rgba(245, 245, 250, 0.98);
+    backdrop-filter: blur(12px);
+    padding: 1rem 2rem 1.5rem;
+    border-bottom: 1px solid rgba(124, 58, 237, 0.08);
+    gap: 0.75rem;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+}
+
 @media (max-width: 600px) {
   .content-panel {
     width: 100vw;
