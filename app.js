@@ -153,7 +153,16 @@ let currentCarIndex = 0;
 let state = 'LOADING'; // LOADING | EXTERIOR | TRANSITIONING | COCKPIT
 let scene, camera, renderer, controls;
 let carDataArray = [];
+
+// Scroll-driven animation
+let scrollAccumulator = 0;
+let timelineProgress = 0;
+let activeTimeline = null;
+let preTransitionState = null;
+let hasScrolledForward = false;
+let scrollDirection = 1;
 let scrollCooldown = false;
+const SCROLL_THRESHOLD = 2000;
 
 // Camera targets
 const SHOWROOM_CAM = { x: 0, y: 6, z: 16 };
@@ -245,28 +254,43 @@ async function init() {
   // Click on a car to enter it
   renderer.domElement.addEventListener('click', onCanvasClick);
 
-  // HUD exit button
-  document.getElementById('exit-btn').addEventListener('click', exitCar);
+  // HUD exit button (immediate, not scroll-driven)
+  document.getElementById('exit-btn').addEventListener('click', exitCarImmediate);
 
   // Scroll to navigate through cars sequentially
   container.addEventListener('wheel', (e) => {
+    e.preventDefault();
+
+    if (state === 'TRANSITIONING' && activeTimeline) {
+      // Feed scroll into accumulator to drive the active timeline
+      let delta = e.deltaY;
+      if (e.deltaMode === 1) delta *= 40; // line mode → pixel approximation
+      scrollAccumulator += delta * scrollDirection;
+      scrollAccumulator = Math.max(0, Math.min(scrollAccumulator, SCROLL_THRESHOLD));
+      if (scrollAccumulator > 100) hasScrolledForward = true;
+      return;
+    }
+
+    // Brief cooldown after transitions complete to prevent accidental triggers
     if (scrollCooldown) return;
 
-    if (e.deltaY > 50) {
-      // Scroll down — forward
+    if (e.deltaY > 30) {
+      // Scroll down — start forward transition
+      scrollDirection = 1;
       if (state === 'EXTERIOR') {
         currentCarIndex = 0;
         enterCar();
       } else if (state === 'COCKPIT') {
         transitionToNextCar();
       }
-    } else if (e.deltaY < -50) {
-      // Scroll up — backward
+    } else if (e.deltaY < -30) {
+      // Scroll up — start backward transition
+      scrollDirection = -1;
       if (state === 'COCKPIT') {
         transitionToPrevCar();
       }
     }
-  });
+  }, { passive: false });
 
   // Mobile fallback buttons
   document.querySelectorAll('.mobile-nav-btn').forEach((btn) => {
@@ -386,6 +410,8 @@ function onCanvasClick(event) {
         if (!isNaN(index) && index < CARS.length) {
           currentCarIndex = index;
           enterCar();
+          // Auto-play for click (not scroll-driven)
+          scrollAccumulator = SCROLL_THRESHOLD;
           return;
         }
       }
@@ -524,8 +550,11 @@ function setCockpitPosition(index) {
 
 function enterCar() {
   if (state !== 'EXTERIOR') return;
+  preTransitionState = 'EXTERIOR';
   state = 'TRANSITIONING';
-  scrollCooldown = true;
+  scrollAccumulator = 0;
+  timelineProgress = 0;
+  hasScrolledForward = false;
 
   document.getElementById('hero-overlay').classList.add('hidden');
   document.getElementById('car-labels').classList.add('hidden');
@@ -543,16 +572,21 @@ function enterCar() {
   const cockpitFill = scene.getObjectByName('cockpit_fill');
   const dashLight = scene.getObjectByName('dash_light');
 
-  const timeline = gsap.timeline({
+  // Show overlays immediately so info is visible during scroll-in
+  populateOverlays();
+  showOverlay();
+  document.getElementById('cockpit-hud').classList.add('visible');
+
+  activeTimeline = gsap.timeline({
+    paused: true,
     onComplete: () => {
+      activeTimeline = null;
       state = 'COCKPIT';
-      scrollCooldown = false;
+      scrollAccumulator = 0;
+      timelineProgress = 0;
       setCockpitEnabled(true);
-
-      document.getElementById('cockpit-hud').classList.add('visible');
-
-      populateOverlays();
-      showOverlay();
+      scrollCooldown = true;
+      setTimeout(() => { scrollCooldown = false; }, 600);
 
       if (cockpitLight) gsap.to(cockpitLight, { intensity: 5.0, duration: 0.3 });
       if (cockpitFill) gsap.to(cockpitFill, { intensity: 3.0, duration: 0.3 });
@@ -561,18 +595,18 @@ function enterCar() {
   });
 
   // Step 1: Approach from side + rotate car to face forward
-  timeline.to(camera.position, {
+  activeTimeline.to(camera.position, {
     x: modelCenter.x - modelSize.x * 0.6,
     y: modelCenter.y + modelSize.y * 0.3,
     z: modelCenter.z + modelSize.z * 0.1,
     duration: 0.6,
-    ease: 'power2.out',
+    ease: 'none',
   });
 
-  timeline.to(carModel.rotation, {
+  activeTimeline.to(carModel.rotation, {
     y: 0,
     duration: 0.6,
-    ease: 'power2.out',
+    ease: 'none',
     onComplete: () => {
       // Recompute bounds now that car faces forward
       recomputeBounds(currentCarIndex);
@@ -586,30 +620,25 @@ function enterCar() {
   }, 0); // Start at the same time as camera approach
 
   // Step 2: Slide into cockpit (uses dynamically set cockpitBasePosition)
-  timeline.to(camera.position, {
+  activeTimeline.to(camera.position, {
     x: () => cockpitBasePosition.x,
     y: () => cockpitBasePosition.y,
     z: () => cockpitBasePosition.z,
     duration: 0.7,
-    ease: 'power3.inOut',
+    ease: 'none',
   });
 
-  timeline.to(controls.target, {
+  activeTimeline.to(controls.target, {
     x: () => cockpitLookTarget.x,
     y: () => cockpitLookTarget.y,
     z: () => cockpitLookTarget.z,
     duration: 0.7,
-    ease: 'power3.inOut',
+    ease: 'none',
   }, '-=0.7');
 }
 
-function exitCar() {
-  if (state !== 'COCKPIT') return;
-  state = 'TRANSITIONING';
-  scrollCooldown = true;
-
+function prepareExitCar() {
   closePanel();
-
   document.getElementById('cockpit-hud').classList.remove('visible');
   hideOverlays();
   setCockpitEnabled(false);
@@ -623,70 +652,99 @@ function exitCar() {
   if (cockpitLight) gsap.to(cockpitLight, { intensity: 0, duration: 0.3 });
   if (cockpitFill) gsap.to(cockpitFill, { intensity: 0, duration: 0.3 });
   if (dashLight) gsap.to(dashLight, { intensity: 0, duration: 0.3 });
+}
 
+function buildExitTimeline(onComplete) {
   const carModel = carDataArray[currentCarIndex].model;
   const originalRotation = CARS[currentCarIndex].rotation;
 
-  const timeline = gsap.timeline({
-    onComplete: () => {
-      recomputeBounds(currentCarIndex);
-      state = 'EXTERIOR';
-      scrollCooldown = false;
-      controls.enabled = true;
-      document.getElementById('hero-overlay').classList.remove('hidden');
-      document.getElementById('car-labels').classList.remove('hidden');
-    },
-  });
+  const tl = gsap.timeline({ paused: true, onComplete });
 
-  timeline.to(camera.position, {
+  tl.to(camera.position, {
     x: SHOWROOM_CAM.x, y: SHOWROOM_CAM.y, z: SHOWROOM_CAM.z,
     duration: 0.8,
-    ease: 'power3.out',
+    ease: 'none',
   });
 
-  timeline.to(controls.target, {
+  tl.to(controls.target, {
     x: SHOWROOM_TARGET.x, y: SHOWROOM_TARGET.y, z: SHOWROOM_TARGET.z,
     duration: 0.8,
-    ease: 'power3.out',
+    ease: 'none',
   }, '-=0.8');
 
-  // Rotate car back to showroom angle
-  timeline.to(carModel.rotation, {
+  tl.to(carModel.rotation, {
     y: originalRotation,
     duration: 0.8,
-    ease: 'power3.out',
+    ease: 'none',
   }, 0);
+
+  return tl;
+}
+
+function onExitComplete() {
+  recomputeBounds(currentCarIndex);
+  activeTimeline = null;
+  state = 'EXTERIOR';
+  scrollAccumulator = 0;
+  timelineProgress = 0;
+  controls.enabled = true;
+  scrollCooldown = true;
+  setTimeout(() => { scrollCooldown = false; }, 600);
+  document.getElementById('hero-overlay').classList.remove('hidden');
+  document.getElementById('car-labels').classList.remove('hidden');
+}
+
+// Scroll-driven exit (used by scroll navigation)
+function exitCar() {
+  if (state !== 'COCKPIT') return;
+  preTransitionState = 'COCKPIT';
+  state = 'TRANSITIONING';
+  scrollAccumulator = 0;
+  timelineProgress = 0;
+  hasScrolledForward = false;
+
+  prepareExitCar();
+  activeTimeline = buildExitTimeline(onExitComplete);
+}
+
+// Immediate exit (used by exit button click)
+function exitCarImmediate() {
+  if (state !== 'COCKPIT') return;
+  state = 'TRANSITIONING';
+
+  prepareExitCar();
+  const tl = buildExitTimeline(() => {
+    recomputeBounds(currentCarIndex);
+    state = 'EXTERIOR';
+    controls.enabled = true;
+    document.getElementById('hero-overlay').classList.remove('hidden');
+    document.getElementById('car-labels').classList.remove('hidden');
+  });
+  tl.play();
 }
 
 function exitCarThenEnter(nextIndex) {
   if (state !== 'COCKPIT') return;
+  preTransitionState = 'COCKPIT';
   state = 'TRANSITIONING';
-  scrollCooldown = true;
+  scrollAccumulator = 0;
+  timelineProgress = 0;
+  hasScrolledForward = false;
 
-  closePanel();
-
-  document.getElementById('cockpit-hud').classList.remove('visible');
-  hideOverlays();
-  setCockpitEnabled(false);
-
-  const iframe = document.querySelector('#dash-video iframe');
-  if (iframe) iframe.src = '';
-
-  const cockpitLight = scene.getObjectByName('cockpit_light');
-  const cockpitFill = scene.getObjectByName('cockpit_fill');
-  const dashLight = scene.getObjectByName('dash_light');
-  if (cockpitLight) gsap.to(cockpitLight, { intensity: 0, duration: 0.3 });
-  if (cockpitFill) gsap.to(cockpitFill, { intensity: 0, duration: 0.3 });
-  if (dashLight) gsap.to(dashLight, { intensity: 0, duration: 0.3 });
+  prepareExitCar();
 
   const carModel = carDataArray[currentCarIndex].model;
   const carCenter = carDataArray[currentCarIndex].modelCenter;
   const originalRotation = CARS[currentCarIndex].rotation;
 
-  const timeline = gsap.timeline({
+  activeTimeline = gsap.timeline({
+    paused: true,
     onComplete: () => {
       recomputeBounds(currentCarIndex);
+      activeTimeline = null;
       state = 'EXTERIOR';
+      scrollAccumulator = 0;
+      timelineProgress = 0;
       controls.enabled = true;
       // Now enter the next car
       currentCarIndex = nextIndex;
@@ -694,22 +752,23 @@ function exitCarThenEnter(nextIndex) {
     },
   });
 
-  timeline.to(camera.position, {
+  // Phase 1: Exit current car
+  activeTimeline.to(camera.position, {
     x: SHOWROOM_CAM.x, y: SHOWROOM_CAM.y, z: SHOWROOM_CAM.z,
     duration: 0.7,
-    ease: 'power3.out',
+    ease: 'none',
   });
 
-  timeline.to(controls.target, {
+  activeTimeline.to(controls.target, {
     x: carCenter.x, y: carCenter.y, z: carCenter.z,
     duration: 0.7,
-    ease: 'power3.out',
+    ease: 'none',
   }, '-=0.7');
 
-  timeline.to(carModel.rotation, {
+  activeTimeline.to(carModel.rotation, {
     y: originalRotation,
     duration: 0.7,
-    ease: 'power3.out',
+    ease: 'none',
   }, 0);
 }
 
@@ -771,6 +830,8 @@ function createCarLabels() {
       if (state !== 'EXTERIOR') return;
       currentCarIndex = i;
       enterCar();
+      // Auto-play for click (not scroll-driven)
+      scrollAccumulator = SCROLL_THRESHOLD;
     });
 
     container.appendChild(card);
@@ -816,6 +877,36 @@ function animate() {
   }
 
   if (state === 'TRANSITIONING') {
+    if (activeTimeline) {
+      // Direct scroll-to-progress mapping (no lerp)
+      timelineProgress = scrollAccumulator / SCROLL_THRESHOLD;
+      timelineProgress = Math.min(Math.max(timelineProgress, 0), 1);
+      activeTimeline.progress(timelineProgress);
+
+      // Cancel transition if user scrolled forward then all the way back
+      if (hasScrolledForward && timelineProgress <= 0.001 && scrollAccumulator <= 0) {
+        activeTimeline.progress(0);
+        activeTimeline.kill();
+        activeTimeline = null;
+        scrollAccumulator = 0;
+        timelineProgress = 0;
+
+        if (preTransitionState === 'EXTERIOR') {
+          state = 'EXTERIOR';
+          controls.enabled = true;
+          document.getElementById('hero-overlay').classList.remove('hidden');
+          document.getElementById('car-labels').classList.remove('hidden');
+          document.getElementById('cockpit-hud').classList.remove('visible');
+          hideOverlays();
+        } else if (preTransitionState === 'COCKPIT') {
+          state = 'COCKPIT';
+          setCockpitEnabled(true);
+          document.getElementById('cockpit-hud').classList.add('visible');
+          populateOverlays();
+          showOverlay();
+        }
+      }
+    }
     camera.lookAt(controls.target);
   }
 
