@@ -1114,6 +1114,53 @@ a:hover {
 }
 
 /* ============================================
+   MODE SWITCH (3D / Reader toggle)
+   ============================================ */
+.mode-switch {
+  position: fixed;
+  top: 1rem;
+  right: 1.5rem;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  background: rgba(245, 245, 250, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(124, 58, 237, 0.15);
+  border-radius: 999px;
+  padding: 3px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.mode-switch a,
+.mode-switch span {
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.mode-switch .mode-active {
+  background: #7c3aed;
+  color: #fff;
+  cursor: default;
+}
+
+.mode-switch a {
+  color: #6a6a7e;
+}
+
+.mode-switch a:hover {
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.08);
+}
+
+/* ============================================
    NAVIGATION
    ============================================ */
 nav {
