@@ -87,6 +87,33 @@ const CARS = [
     category: 'work',
     projects: [
       {
+        name: 'Gradianza AI',
+        subtitle: 'AI Receptionist Platform',
+        award: 'Nov 2025 \u2013 Present',
+        desc: 'Architecting an AI-powered receptionist handling bookings for hotels and restaurants. Currently deployed and scaled to handle hundreds of calls per day. Built custom agents and a RAG pipeline with full privacy.',
+        tags: ['AI Agents', 'RAG', 'LangGraph', 'Voice AI'],
+        github: null,
+      },
+      {
+        name: 'The Diet Science',
+        subtitle: 'AI-Powered Nutritionist',
+        award: 'Feb 2026 \u2013 Present',
+        desc: 'Architecting an AI-powered nutritionist using RAG with Pinecone and OpenAI to retrieve personalised nutrition information via a LangGraph agent; currently in trial with 15 users.',
+        tags: ['RAG', 'Pinecone', 'OpenAI', 'LangGraph', 'Python'],
+        github: null,
+      },
+    ],
+    video: null,
+    position: { x: 4, y: 0, z: -6 },
+    rotation: 0.3,
+    cockpit: { posX: -0.01, posY: 0.35, posZ: -0.18, lookY: 0.10, lookZ: 0.4 },
+
+  },
+  {
+    model: '1991_rwb_porsche_911_964/scene.gltf',
+    category: 'work',
+    projects: [
+      {
         name: 'Heuris Tech',
         subtitle: 'Co-founder & AI Engineer \u00b7 UQ ilab accelerator',
         award: 'Mar 2025 \u2013 Present',
@@ -108,34 +135,6 @@ const CARS = [
         award: 'Feb 2025 \u2013 Jun 2025',
         desc: 'Facilitated tutorials and practicals for second-year CS students in Theory of Computing (COMP2048).',
         tags: ['Teaching', 'Theory of Computing'],
-        github: null,
-      },
-    ],
-    video: null,
-    videoPos: { left: '52%', top: '90%' },
-    position: { x: 4, y: 0, z: -6 },
-    rotation: 0.3,
-    cockpit: { posX: -0.01, posY: 0.35, posZ: -0.18, lookY: 0.10, lookZ: 0.4 },
-
-  },
-  {
-    model: '1991_rwb_porsche_911_964/scene.gltf',
-    category: 'work',
-    projects: [
-      {
-        name: 'Gradianza AI',
-        subtitle: 'AI Receptionist Platform',
-        award: 'Nov 2025 \u2013 Present',
-        desc: 'Architecting an AI-powered receptionist handling bookings for hotels and restaurants. Currently deployed and scaled to handle hundreds of calls per day. Built custom agents and a RAG pipeline with full privacy.',
-        tags: ['AI Agents', 'RAG', 'LangGraph', 'Voice AI'],
-        github: null,
-      },
-      {
-        name: 'The Diet Science',
-        subtitle: 'AI-Powered Nutritionist',
-        award: 'Feb 2026 \u2013 Present',
-        desc: 'Architecting an AI-powered nutritionist using RAG with Pinecone and OpenAI to retrieve personalised nutrition information via a LangGraph agent; currently in trial with 15 users.',
-        tags: ['RAG', 'Pinecone', 'OpenAI', 'LangGraph', 'Python'],
         github: null,
       },
     ],
