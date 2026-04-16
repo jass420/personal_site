@@ -61,7 +61,7 @@ const CARS = [
       },
     ],
     video: 'https://www.youtube.com/embed/lLBdEXCamtU',
-    videoPos: { left: '52%', top: '90%' },
+    videoPos: { left: '51%', top: '56%' },
     position: { x: 3, y: 0, z: 5 },
     rotation: -0.5,
     cockpit: { posX: -0.01, posY: 0.35, posZ: -0.18, lookY: 0.10, lookZ: 0.4 },
