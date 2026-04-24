@@ -83,7 +83,7 @@ const CARS = [
 
   },
   {
-    model: '2012_aston_martin_vantage_gte/scene.gltf',
+    model: '2009_mercedes-benz_sl65_amg_black_series/scene.gltf',
     category: 'work',
     projects: [
       {
