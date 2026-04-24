@@ -347,17 +347,6 @@ function onLoadProgress(fraction) {
 function onModelLoaded() {
   onLoadProgress(1);
 
-  const isMobile = window.innerWidth < 768;
-  if (isMobile) {
-    document.getElementById('mobile-fallback').classList.add('visible');
-    document.getElementById('loading-screen').classList.add('fade-out');
-    setTimeout(() => {
-      document.getElementById('loading-screen').style.display = 'none';
-    }, 800);
-    state = 'EXTERIOR';
-    return;
-  }
-
   setTimeout(() => {
     document.getElementById('loading-screen').classList.add('fade-out');
     setTimeout(() => {

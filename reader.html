@@ -12,6 +12,8 @@
 </head>
 <body>
 
+  <div id="mobile-banner" role="note">For the best experience, open this website on a laptop or larger screen.</div>
+
   <nav>
     <a href="reader.html" class="nav-logo">Jas Matharu</a>
     <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">
@@ -349,6 +351,11 @@
         document.querySelector('.nav-links').classList.remove('open');
       });
     });
+
+    if (window.matchMedia('(max-width: 768px)').matches
+        || /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      document.body.classList.add('is-mobile');
+    }
   </script>
 
 </body>

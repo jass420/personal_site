@@ -9,6 +9,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 
+  <script>
+    (function(){
+      var isMobile = window.matchMedia('(max-width: 768px)').matches
+        || /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (isMobile) { window.location.replace('reader.html'); }
+    })();
+  </script>
+  <noscript><meta http-equiv="refresh" content="0; url=reader.html"></noscript>
+
   <!-- Three.js Import Map -->
   <script type="importmap">
   {
@@ -83,29 +92,6 @@
   <!-- ======================== PANEL OVERLAY ======================== -->
   <div id="panel-overlay" style="display:none;"></div>
   <button id="panel-close-btn" class="panel-close-btn" style="display:none;">&times;</button>
-
-  <!-- ======================== MOBILE FALLBACK ======================== -->
-  <div id="mobile-fallback">
-    <div class="mobile-hero">
-      <h1>Jas Matharu</h1>
-      <p>AI Engineer &amp; Builder</p>
-    </div>
-    <div style="text-align:center;margin-bottom:1.5rem;">
-      <a href="reader.html" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;border-radius:10px;font-size:0.9rem;font-weight:500;color:#fff;background:#7c3aed;text-decoration:none;box-shadow:0 4px 16px rgba(124,58,237,0.25);">View Full Portfolio &rarr;</a>
-    </div>
-    <div class="mobile-nav-grid">
-      <button class="mobile-nav-btn" data-panel="roomie-video">
-        <span class="mobile-icon">&#x1F3AC;</span>
-        <span class="mobile-label">Roomie Demo</span>
-        <span class="mobile-sublabel">Watch Video</span>
-      </button>
-      <button class="mobile-nav-btn" data-panel="roomie-details">
-        <span class="mobile-icon">&#x1F3CE;</span>
-        <span class="mobile-label">About Roomie</span>
-        <span class="mobile-sublabel">Project Details</span>
-      </button>
-    </div>
-  </div>
 
   <!-- ======================== MODE SWITCH ======================== -->
   <div class="mode-switch">
