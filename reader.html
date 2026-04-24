@@ -30,6 +30,7 @@
 
   <!-- ======================== HERO ======================== -->
   <section class="reader-hero" id="top">
+    <span class="hero-availability">Available for new opportunities</span>
     <span class="hero-label">AI Engineer &amp; Builder</span>
     <h1 class="hero-title">Building AI that actually solves <span class="gradient-text">real-world problems.</span></h1>
     <p class="hero-subtitle">
@@ -39,7 +40,15 @@
       <a href="mailto:mjas0401@gmail.com" class="reader-cta reader-cta--primary">Get in Touch</a>
       <a href="Resume_jas_2026.pdf" class="reader-cta reader-cta--secondary">Resume (PDF)</a>
     </div>
+    <div class="hero-stats">
+      <span><strong>5+</strong> projects shipped</span>
+      <span class="stat-divider">&middot;</span>
+      <span><strong>2</strong> startups founded</span>
+      <span class="stat-divider">&middot;</span>
+      <span><strong>UQ</strong> Computer Science graduate</span>
+    </div>
   </section>
+  <div class="hero-divider"></div>
 
   <!-- ======================== SKILLS ======================== -->
   <section class="reader-section" id="skills">
@@ -66,51 +75,90 @@
     <h2 class="section-title">Things I've Built</h2>
     <p class="section-intro">Hackathons, university, and side projects.</p>
 
-    <div class="card-grid">
+    <div class="feature-block-grid">
 
-      <div class="card">
-        <div class="card-header">
-          <h3>Roomie &ndash; AI Interior Designer</h3>
-          <span class="date">2026</span>
+      <!-- Block 1: Roomie (image LEFT) -->
+      <div class="feature-block feature-block--reverse">
+        <div class="feature-block-image">
+          <img src="cars/pagani.png" alt="Pagani Huayra BC representing Roomie" loading="lazy">
         </div>
-        <span class="award">Sophiie Hackathon 2026 &ndash; 5th / 15</span>
-        <p>Upload a photo of your room and Roomie's AI agent autonomously finds matching furniture on Facebook Marketplace, compares prices, and messages sellers on your behalf.</p>
-        <div class="tags">
-          <span class="tag">LangGraph</span>
-          <span class="tag">GPT-4 Vision</span>
-          <span class="tag">AI Agents</span>
-          <span class="tag">Python</span>
-        </div>
-        <a class="card-link" href="https://github.com/JasMatharu/roomie" target="_blank">View on GitHub &rarr;</a>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <h3>Auto Exam Scheduler</h3>
-          <span class="date">Mar &ndash; Jun 2025</span>
-        </div>
-        <p>Co-built and load-tested the backend for a university exam scheduling system handling room allocation and invigilator assignments, deployed on AWS with auto-scaling (1&ndash;4 instances) achieving 99.9% uptime.</p>
-        <div class="tags">
-          <span class="tag">AWS</span>
-          <span class="tag">Auto-scaling</span>
-          <span class="tag">Load Testing</span>
-        </div>
-        <a class="card-link" href="https://github.com/CSSE6400/2025_P2_Auto_Exam_Scheduling" target="_blank">View on GitHub &rarr;</a>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <h3>Detecting Melanoma from Medical Scans</h3>
-          <span class="date">Sep &ndash; Nov 2025</span>
-        </div>
-        <p>Implemented and fine-tuned a Siamese network to classify the ISIC 2020 Kaggle Challenge dataset and achieved 80% accuracy despite a severe 98:2 class imbalance.</p>
-        <div class="tags">
-          <span class="tag">Deep Learning</span>
-          <span class="tag">Siamese Networks</span>
-          <span class="tag">Python</span>
+        <div class="feature-block-content">
+          <div class="feature-entry">
+            <div class="card-header">
+              <h3>Roomie &ndash; AI Interior Designer</h3>
+              <span class="date">2026</span>
+            </div>
+            <span class="award">Sophiie Hackathon 2026 &ndash; 5th / 15</span>
+            <p>Upload a photo of your room and Roomie's AI agent autonomously finds matching furniture on Facebook Marketplace, compares prices, and messages sellers on your behalf.</p>
+            <div class="tags">
+              <span class="tag">LangGraph</span>
+              <span class="tag">GPT-4 Vision</span>
+              <span class="tag">AI Agents</span>
+              <span class="tag">Python</span>
+            </div>
+            <a class="card-link" href="https://github.com/JasMatharu/roomie" target="_blank">View on GitHub &rarr;</a>
+          </div>
         </div>
       </div>
 
+      <!-- Block 2: Exam Scheduler + Melanoma (image RIGHT) -->
+      <div class="feature-block">
+        <div class="feature-block-content">
+          <div class="feature-entry">
+            <div class="card-header">
+              <h3>Auto Exam Scheduler</h3>
+              <span class="date">Mar &ndash; Jun 2025</span>
+            </div>
+            <p>Co-built and load-tested the backend for a university exam scheduling system handling room allocation and invigilator assignments, deployed on AWS with auto-scaling (1&ndash;4 instances) achieving 99.9% uptime.</p>
+            <div class="tags">
+              <span class="tag">AWS</span>
+              <span class="tag">Auto-scaling</span>
+              <span class="tag">Load Testing</span>
+            </div>
+            <a class="card-link" href="https://github.com/CSSE6400/2025_P2_Auto_Exam_Scheduling" target="_blank">View on GitHub &rarr;</a>
+          </div>
+          <div class="feature-entry">
+            <div class="card-header">
+              <h3>Detecting Melanoma from Medical Scans</h3>
+              <span class="date">Sep &ndash; Nov 2025</span>
+            </div>
+            <p>Implemented and fine-tuned a Siamese network to classify the ISIC 2020 Kaggle Challenge dataset and achieved 80% accuracy despite a severe 98:2 class imbalance.</p>
+            <div class="tags">
+              <span class="tag">Deep Learning</span>
+              <span class="tag">Siamese Networks</span>
+              <span class="tag">Python</span>
+            </div>
+          </div>
+        </div>
+        <div class="feature-block-image">
+          <img src="cars/aston-amr.png" alt="Aston Martin Vantage AMR representing two ML projects" loading="lazy">
+        </div>
+      </div>
+
+      <!-- Block 3: Valorant (image LEFT) -->
+      <div class="feature-block feature-block--reverse">
+        <div class="feature-block-image">
+          <img src="cars/lambo.png" alt="Lamborghini Murcielago representing Valorant Match Predictor" loading="lazy">
+        </div>
+        <div class="feature-block-content">
+          <div class="feature-entry">
+            <div class="card-header">
+              <h3>Valorant Match Predictor</h3>
+              <span class="date">Aug 2024</span>
+            </div>
+            <span class="award">UQCS Hackathon 2024 &ndash; People's Choice Award</span>
+            <p>Built a match outcome predictor for Valorant using a gradient boosting model (Python, XGBoost) achieving 82% accuracy.</p>
+            <div class="tags">
+              <span class="tag">Python</span>
+              <span class="tag">XGBoost</span>
+              <span class="tag">ML</span>
+            </div>
+            <a class="card-link" href="https://github.com/jass420" target="_blank">View on GitHub &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Block 4: Research Paper Link Explorer (no image, full-width card) -->
       <div class="card">
         <div class="card-header">
           <h3>Research Paper Link Explorer</h3>
@@ -125,21 +173,6 @@
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-header">
-          <h3>Valorant Match Predictor</h3>
-          <span class="date">Aug 2024</span>
-        </div>
-        <span class="award">UQCS Hackathon 2024 &ndash; People's Choice Award</span>
-        <p>Built a match outcome predictor for Valorant using a gradient boosting model (Python, XGBoost) achieving 82% accuracy.</p>
-        <div class="tags">
-          <span class="tag">Python</span>
-          <span class="tag">XGBoost</span>
-          <span class="tag">ML</span>
-        </div>
-        <a class="card-link" href="https://github.com/jass420" target="_blank">View on GitHub &rarr;</a>
-      </div>
-
     </div>
 
     <p class="reader-more"><a href="projects.html">View all projects &rarr;</a></p>
@@ -151,57 +184,85 @@
     <h2 class="section-title">Experience</h2>
     <p class="section-intro">Where I've worked and what I've built.</p>
 
-    <div class="timeline">
+    <div class="feature-block-grid">
 
-      <div class="timeline-item">
-        <div class="timeline-header">
-          <h3>Founder &amp; AI Engineer, <a href="https://thedietscience.com" target="_blank">The Diet Science</a></h3>
-          <span class="date">Feb 2026 &ndash; Present</span>
+      <!-- Block 1: Founder roles (image LEFT) -->
+      <div class="feature-block feature-block--reverse">
+        <div class="feature-block-image">
+          <img src="cars/porsche.png" alt="RWB Porsche 911 representing founder roles" loading="lazy">
         </div>
-        <ul>
-          <li>Architecting an AI-powered nutritionist using RAG with Pinecone and OpenAI to retrieve personalised nutrition information via a LangGraph agent; currently in trial with 15 users.</li>
-        </ul>
+        <div class="feature-block-content">
+          <div class="feature-entry">
+            <div class="card-header">
+              <h3>Founder &amp; AI Engineer, <a href="https://thedietscience.com" target="_blank">The Diet Science</a></h3>
+              <span class="date">Feb 2026 &ndash; Present</span>
+            </div>
+            <p>Architecting an AI-powered nutritionist using RAG with Pinecone and OpenAI to retrieve personalised nutrition information via a LangGraph agent; currently in trial with 15 users.</p>
+            <div class="tags">
+              <span class="tag">RAG</span>
+              <span class="tag">Pinecone</span>
+              <span class="tag">OpenAI</span>
+              <span class="tag">LangGraph</span>
+            </div>
+          </div>
+          <div class="feature-entry">
+            <div class="card-header">
+              <h3>Founder &amp; AI Engineer, <a href="https://gradianza.com" target="_blank">Gradianza AI</a></h3>
+              <span class="date">Nov 2025 &ndash; Present</span>
+            </div>
+            <p>Architecting an AI-powered receptionist that handles bookings for hotels and restaurants &mdash; deployed and scaled to handle hundreds of calls per day. Built custom agents and a RAG pipeline with full privacy (hosted on client's hardware).</p>
+            <div class="tags">
+              <span class="tag">AI Agents</span>
+              <span class="tag">Voice AI</span>
+              <span class="tag">RAG</span>
+              <span class="tag">LangGraph</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="timeline-item">
-        <div class="timeline-header">
-          <h3>Founder &amp; AI Engineer, <a href="https://gradianza.com" target="_blank">Gradianza AI</a></h3>
-          <span class="date">Nov 2025 &ndash; Present</span>
+      <!-- Block 2: Heuris + Webcom + Tutor (image RIGHT) -->
+      <div class="feature-block">
+        <div class="feature-block-content">
+          <div class="feature-entry">
+            <div class="card-header">
+              <h3>Co-founder &amp; AI Engineer, <a href="https://useoven.com" target="_blank">Heuris Tech</a></h3>
+              <span class="date">Mar 2025 &ndash; Present</span>
+            </div>
+            <p>Contributed to building a LangGraph-based sales automation agent at useoven.com (UQ ilab accelerator), reducing manual outreach tasks by 90%.</p>
+            <div class="tags">
+              <span class="tag">LangGraph</span>
+              <span class="tag">Sales AI</span>
+              <span class="tag">Automation</span>
+            </div>
+          </div>
+          <div class="feature-entry">
+            <div class="card-header">
+              <h3>App Developer, Webcom</h3>
+              <span class="date">Dec 2024 &ndash; Feb 2025</span>
+            </div>
+            <p>Collaborated in a team of 4 to develop and deploy an internal Flutter app for real estate listings; improved app performance by 30% through UI component optimisation and asynchronous data handling in Dart.</p>
+            <div class="tags">
+              <span class="tag">Flutter</span>
+              <span class="tag">Dart</span>
+              <span class="tag">Mobile</span>
+            </div>
+          </div>
+          <div class="feature-entry">
+            <div class="card-header">
+              <h3>Academic Tutor, University of Queensland</h3>
+              <span class="date">Feb 2025 &ndash; Jun 2025</span>
+            </div>
+            <p>Facilitated tutorials and practical sessions (4 practicals and 1 tutorial) for second-year CS students in Theory of Computing (COMP2048).</p>
+            <div class="tags">
+              <span class="tag">Teaching</span>
+              <span class="tag">Theory of Computing</span>
+            </div>
+          </div>
         </div>
-        <ul>
-          <li>Architecting an AI-powered receptionist which handles bookings for hotels and restaurants. Currently deployed and scaled to handle hundreds of calls per day.</li>
-          <li>Built custom agents for clients to automate marketing tasks and a RAG pipeline that provides full privacy (hosted on client's hardware).</li>
-        </ul>
-      </div>
-
-      <div class="timeline-item">
-        <div class="timeline-header">
-          <h3>Co-founder &amp; AI Engineer, <a href="https://useoven.com" target="_blank">Heuris Tech</a> (UQ ilab accelerator)</h3>
-          <span class="date">Mar 2025 &ndash; Present</span>
+        <div class="feature-block-image">
+          <img src="cars/aston-gte.png" alt="Aston Martin Vantage GTE representing professional career roles" loading="lazy">
         </div>
-        <ul>
-          <li>Contributed to building a LangGraph-based sales automation agent at useoven.com, reducing manual outreach tasks by 90%.</li>
-        </ul>
-      </div>
-
-      <div class="timeline-item">
-        <div class="timeline-header">
-          <h3>App Developer, Webcom</h3>
-          <span class="date">Dec 2024 &ndash; Feb 2025</span>
-        </div>
-        <ul>
-          <li>Collaborated in a team of 4 within a professional office environment to develop and deploy an internal Flutter app for real estate listings; improved app performance by 30% through UI component optimisation and asynchronous data handling in Dart.</li>
-        </ul>
-      </div>
-
-      <div class="timeline-item">
-        <div class="timeline-header">
-          <h3>Academic Tutor, University of Queensland</h3>
-          <span class="date">Feb 2025 &ndash; Jun 2025</span>
-        </div>
-        <ul>
-          <li>Facilitated tutorials and practical sessions (4 practicals and 1 tutorial) for second-year computer science students in Theory of Computing (COMP2048).</li>
-        </ul>
       </div>
 
     </div>

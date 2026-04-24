@@ -1341,3 +1341,130 @@ footer {
     font-size: 1.4rem;
   }
 }
+
+/* ============================================
+   TUTORIAL OVERLAY
+   ============================================ */
+#tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 5, 15, 0.65);
+  backdrop-filter: blur(6px);
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.4s ease;
+}
+
+#tutorial-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tutorial-card {
+  width: min(540px, 90vw);
+  padding: 2.25rem 2.5rem;
+  background: rgba(10, 10, 30, 0.92);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(124, 58, 237, 0.5);
+  border-radius: 16px;
+  box-shadow: 0 0 40px rgba(124, 58, 237, 0.3);
+  color: #fff;
+  text-align: left;
+}
+
+.tutorial-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: #a78bfa;
+  margin-bottom: 0.5rem;
+}
+
+.tutorial-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 1.25rem 0;
+}
+
+.tutorial-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.75rem 0;
+}
+
+.tutorial-list li {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.15);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #d4d4e4;
+}
+
+.tutorial-list li:last-child {
+  border-bottom: none;
+}
+
+.tutorial-kbd {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  margin-right: 0.4rem;
+  background: rgba(124, 58, 237, 0.18);
+  border: 1px solid rgba(124, 58, 237, 0.4);
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #fff;
+}
+
+.tutorial-btn {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.tutorial-btn:hover {
+  background: #6d28d9;
+}
+
+.tutorial-btn:active {
+  transform: scale(0.98);
+}
+
+/* ============================================
+   HELP BUTTON (persistent)
+   ============================================ */
+#help-btn {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 44px;
+  height: 44px;
+  z-index: 50;
+  border-radius: 50%;
+  background: rgba(10, 10, 30, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(124, 58, 237, 0.4);
+  color: #a78bfa;
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+}
+
+#help-btn:hover {
+  border-color: rgba(124, 58, 237, 0.8);
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.35);
+  color: #fff;
+}

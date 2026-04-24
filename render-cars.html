@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Render Cars — Snapshot Tool</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.168.0/examples/jsm/"
+    }
+  }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f5f5fa;
+      color: #1a1a2e;
+      padding: 2rem;
+      min-height: 100vh;
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .help {
+      color: #6a6a7e;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      max-width: 700px;
+      line-height: 1.6;
+    }
+    .help code {
+      background: #e8e8f0;
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+    .actions { margin-bottom: 2rem; display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    button {
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.7rem 1.4rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: #7c3aed;
+      color: #fff;
+      transition: background 0.2s;
+    }
+    button:hover { background: #6d28d9; }
+    button:disabled { background: #a78bfa; cursor: not-allowed; }
+    button.secondary { background: #fff; color: #7c3aed; border: 1px solid rgba(124,58,237,0.3); }
+    button.secondary:hover { background: rgba(124,58,237,0.06); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+    .car-cell {
+      background: #fff;
+      border: 1px solid rgba(124,58,237,0.1);
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .car-cell h3 {
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+    .car-cell .filename {
+      font-size: 0.75rem;
+      color: #7c3aed;
+      font-family: monospace;
+      margin-bottom: 0.75rem;
+    }
+    .car-cell canvas {
+      width: 100%;
+      height: auto;
+      background: linear-gradient(135deg, #f0f0f7, #e8e8f0);
+      border-radius: 8px;
+      display: block;
+    }
+    .car-cell .status {
+      font-size: 0.75rem;
+      color: #6a6a7e;
+      margin-top: 0.5rem;
+      min-height: 1.2em;
+    }
+    .car-cell .status.ready { color: #16a34a; }
+    .car-cell .status.error { color: #dc2626; }
+    .car-cell .row {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+    .car-cell .row button { flex: 1; padding: 0.5rem 0.75rem; font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+  <h1>Car Snapshot Tool</h1>
+  <p class="help">
+    Click <strong>Render All</strong> to load every car and generate a PNG with a transparent background.
+    Then click each <strong>Download</strong> button (or <strong>Download All</strong>) and move the files
+    into a new <code>cars/</code> folder in this project.
+  </p>
+  <div class="actions">
+    <button id="render-all">Render All</button>
+    <button id="download-all" class="secondary" disabled>Download All</button>
+  </div>
+  <div class="grid" id="grid"></div>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+    const CARS = [
+      { file: 'pagani.png',    label: 'Roomie',                                  model: '2016_pagani_huayra_bc/scene.gltf' },
+      { file: 'aston-amr.png', label: 'Auto Exam Scheduler / Detecting Melanoma', model: '2020_aston_martin_vantage_59_amr.glb' },
+      { file: 'lambo.png',     label: 'Valorant Match Predictor',                model: '2010_lamborghini_murcielago_lp670-4_superveloce/scene.gltf' },
+      { file: 'aston-gte.png', label: 'Heuris Tech / Webcom / Tutor',            model: '2012_aston_martin_vantage_gte/scene.gltf' },
+      { file: 'porsche.png',   label: 'Gradianza AI / The Diet Science',         model: '1991_rwb_porsche_911_964/scene.gltf' },
+    ];
+
+    const RENDER_W = 800;
+    const RENDER_H = 600;
+    const loader = new GLTFLoader();
+    const grid = document.getElementById('grid');
+    const renderAllBtn = document.getElementById('render-all');
+    const downloadAllBtn = document.getElementById('download-all');
+
+    // Build cells
+    const cells = CARS.map((car) => {
+      const cell = document.createElement('div');
+      cell.className = 'car-cell';
+      cell.innerHTML = `
+        <h3>${car.label}</h3>
+        <div class="filename">cars/${car.file}</div>
+        <canvas width="${RENDER_W}" height="${RENDER_H}"></canvas>
+        <div class="status">Idle</div>
+        <div class="row">
+          <button class="render-btn">Render</button>
+          <button class="download-btn secondary" disabled>Download</button>
+        </div>
+      `;
+      grid.appendChild(cell);
+      const canvas = cell.querySelector('canvas');
+      const status = cell.querySelector('.status');
+      const renderBtn = cell.querySelector('.render-btn');
+      const downloadBtn = cell.querySelector('.download-btn');
+      renderBtn.addEventListener('click', () => renderCar(car, canvas, status, downloadBtn));
+      downloadBtn.addEventListener('click', () => downloadPng(canvas, car.file));
+      return { car, canvas, status, renderBtn, downloadBtn };
+    });
+
+    function downloadPng(canvas, filename) {
+      const link = document.createElement('a');
+      link.download = filename;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    async function renderCar(car, canvas, status, downloadBtn) {
+      status.className = 'status';
+      status.textContent = 'Loading model…';
+      downloadBtn.disabled = true;
+
+      try {
+        // Fresh scene per car
+        const scene = new THREE.Scene();
+
+        // Lighting
+        scene.add(new THREE.AmbientLight(0xffffff, 1.6));
+        const key = new THREE.DirectionalLight(0xffffff, 2.4);
+        key.position.set(5, 6, 6);
+        scene.add(key);
+        const fill = new THREE.DirectionalLight(0xc8c8ff, 1.0);
+        fill.position.set(-4, 3, -3);
+        scene.add(fill);
+        const rim = new THREE.DirectionalLight(0xffffff, 1.4);
+        rim.position.set(-2, 4, -6);
+        scene.add(rim);
+
+        // Renderer with transparent background
+        const renderer = new THREE.WebGLRenderer({
+          canvas, antialias: true, alpha: true, preserveDrawingBuffer: true,
+        });
+        renderer.setSize(RENDER_W, RENDER_H, false);
+        renderer.setPixelRatio(2);
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.0;
+        renderer.setClearColor(0x000000, 0); // transparent
+
+        // Load model
+        const gltf = await loader.loadAsync(car.model);
+        const model = gltf.scene;
+
+        // Normalize scale and centering
+        const box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const scale = 2.5 / maxDim;
+        model.scale.setScalar(scale);
+
+        // Recenter at origin
+        const box2 = new THREE.Box3().setFromObject(model);
+        const center = box2.getCenter(new THREE.Vector3());
+        model.position.sub(center);
+
+        scene.add(model);
+
+        // 3/4 front-right camera
+        const camera = new THREE.PerspectiveCamera(35, RENDER_W / RENDER_H, 0.1, 100);
+        camera.position.set(2.4, 1.5, 3.2);
+        camera.lookAt(0, 0.1, 0);
+
+        renderer.render(scene, camera);
+
+        status.className = 'status ready';
+        status.textContent = 'Ready';
+        downloadBtn.disabled = false;
+      } catch (err) {
+        console.error(err);
+        status.className = 'status error';
+        status.textContent = 'Error: ' + err.message;
+      }
+    }
+
+    renderAllBtn.addEventListener('click', async () => {
+      renderAllBtn.disabled = true;
+      for (const c of cells) {
+        await renderCar(c.car, c.canvas, c.status, c.downloadBtn);
+      }
+      renderAllBtn.disabled = false;
+      downloadAllBtn.disabled = false;
+    });
+
+    downloadAllBtn.addEventListener('click', async () => {
+      for (const c of cells) {
+        downloadPng(c.canvas, c.car.file);
+        await new Promise((r) => setTimeout(r, 250)); // space out downloads
+      }
+    });
+  </script>
+</body>
+</html>

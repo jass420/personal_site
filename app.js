@@ -154,6 +154,7 @@ let state = 'LOADING'; // LOADING | EXTERIOR | TRANSITIONING | COCKPIT
 let scene, camera, renderer, controls;
 let carDataArray = [];
 let scrollCooldown = false;
+let tutorialOpen = false;
 
 // Camera targets
 const SHOWROOM_CAM = { x: 0, y: 6, z: 16 };
@@ -250,6 +251,10 @@ async function init() {
 
   // Scroll to navigate through cars sequentially
   container.addEventListener('wheel', (e) => {
+    if (tutorialOpen) {
+      e.preventDefault();
+      return;
+    }
     if (scrollCooldown) return;
 
     if (e.deltaY > 50) {
@@ -360,6 +365,7 @@ function onModelLoaded() {
     }, 800);
     document.getElementById('hero-overlay').classList.remove('hidden');
     createCarLabels();
+    initTutorial();
     state = 'EXTERIOR';
   }, 600);
 }
@@ -736,6 +742,38 @@ function transitionToPrevCar() {
 // ============================================
 // FLOATING CAR LABELS
 // ============================================
+
+function initTutorial() {
+  const overlay = document.getElementById('tutorial-overlay');
+  const dismissBtn = document.getElementById('tutorial-dismiss');
+  const helpBtn = document.getElementById('help-btn');
+
+  const showTutorial = () => {
+    overlay.classList.remove('hidden');
+    tutorialOpen = true;
+  };
+
+  const hideTutorial = () => {
+    overlay.classList.add('hidden');
+    tutorialOpen = false;
+  };
+
+  if (!localStorage.getItem('tutorialDismissed')) {
+    showTutorial();
+  }
+
+  dismissBtn.addEventListener('click', () => {
+    hideTutorial();
+    localStorage.setItem('tutorialDismissed', 'true');
+  });
+
+  helpBtn.addEventListener('click', showTutorial);
+
+  // Click backdrop outside card dismisses (without setting localStorage flag)
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) hideTutorial();
+  });
+}
 
 // Section header world positions (computed after models load)
 function createCarLabels() {

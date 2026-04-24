@@ -47,7 +47,7 @@
    READER PAGE: SECTIONS
    ============================================ */
 .reader-section {
-  max-width: 720px;
+  max-width: 960px;
   margin: 0 auto;
   padding: 2.5rem 1.5rem;
 }
@@ -205,6 +205,192 @@
 .reader-more a {
   font-weight: 500;
   color: #7c3aed;
+}
+
+/* ============================================
+   READER PAGE: HERO POLISH
+   ============================================ */
+.hero-availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #16a34a;
+  background: rgba(22, 163, 74, 0.08);
+  border: 1px solid rgba(22, 163, 74, 0.2);
+  border-radius: 999px;
+  padding: 0.3rem 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.hero-availability::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 8px rgba(22, 163, 74, 0.6);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.2rem;
+  margin-top: 2rem;
+  font-size: 0.8rem;
+  color: #6a6a7e;
+}
+
+.hero-stats .stat-divider {
+  color: rgba(124, 58, 237, 0.3);
+  font-weight: 600;
+}
+
+.hero-stats strong {
+  color: #1a1a2e;
+  font-weight: 600;
+}
+
+.hero-divider {
+  max-width: 720px;
+  height: 1px;
+  margin: 0 auto;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(124, 58, 237, 0.25) 30%,
+    rgba(124, 58, 237, 0.25) 70%,
+    transparent);
+}
+
+/* ============================================
+   READER PAGE: FEATURE BLOCKS (zig-zag)
+   ============================================ */
+.feature-block-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.feature-block {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.feature-block--reverse {
+  grid-template-columns: 1fr 1.6fr;
+}
+
+.feature-block--reverse .feature-block-image {
+  order: -1;
+}
+
+.feature-block-image {
+  background: linear-gradient(135deg, #f0f0f7, #e8e8f0);
+  border: 1px solid rgba(124, 58, 237, 0.1);
+  border-radius: 14px;
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-block-image:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(124, 58, 237, 0.14);
+}
+
+.feature-block-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.feature-block-content {
+  background: #ffffff;
+  border: 1px solid rgba(124, 58, 237, 0.1);
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.feature-entry + .feature-entry {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed rgba(124, 58, 237, 0.15);
+}
+
+.feature-entry .card-header {
+  margin-bottom: 0.5rem;
+}
+
+.feature-entry .card-header h3 {
+  font-size: 1rem;
+}
+
+.feature-entry .award {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #b8860b;
+  background: rgba(184, 134, 11, 0.08);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  margin-bottom: 0.5rem;
+}
+
+.feature-entry p {
+  font-size: 0.85rem;
+  color: #5a5a6e;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.feature-entry .tags {
+  margin-top: 0.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.feature-entry .card-link {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #7c3aed;
+}
+
+/* Responsive: stack image above text on tablet/phone */
+@media (max-width: 768px) {
+  .feature-block,
+  .feature-block--reverse {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .feature-block--reverse .feature-block-image {
+    order: 0;
+  }
+
+  .feature-block-image {
+    aspect-ratio: 16 / 10;
+    max-height: 240px;
+  }
 }
 
 /* ============================================
